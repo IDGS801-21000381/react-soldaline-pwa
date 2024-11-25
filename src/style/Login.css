@@ -1,0 +1,114 @@
+/* Importar fuente Roboto */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* Configuración general de la página de login */
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  /* Fuente Roboto */
+  background: url('/fondo.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+.login-page {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Estilos para la tarjeta de login */
+.login-card {
+  background-color: #000;
+  padding: 40px 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  width: 350px;
+  text-align: center;
+}
+
+/* Encabezado del login */
+.login-header {
+  margin-bottom: 20px;
+}
+
+.login-logo {
+  width: 80px;
+  height: auto;
+  margin-bottom: 15px;
+}
+
+.login-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #91794a;
+  margin: 0;
+}
+
+/* Estilo de los inputs y las etiquetas flotantes */
+.input-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.login-input {
+  width: 100%;
+  padding: 10px 10px;
+  font-size: 16px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  background-color: #222;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.login-input:focus {
+  border-color: #91794a;
+}
+
+.login-label {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #aaa;
+  pointer-events: none;
+  transition: 0.3s ease;
+}
+
+.login-input:focus+.login-label,
+.login-input:not(:placeholder-shown)+.login-label {
+  top: -10px;
+  font-size: 14px;
+  color: #91794a;
+}
+
+/* Botón de ingresar */
+.login-button {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #91794a;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: #805605;
+}
+
+.login-button:active {
+  transform: scale(0.98);
+}
+
+/* Otros ajustes */
+.login-card h2,
+.login-card p {
+  color: #fff;
+}
