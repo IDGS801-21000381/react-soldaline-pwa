@@ -1,0 +1,114 @@
+/* Layout */
+.planificacion-layout {
+  display: flex;
+  height: 100vh;
+  background-color: #f9f9f9;
+}
+
+.planificacion-card-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.planificacion-card {
+  width: 100%;
+  max-width: 900px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Header */
+.planificacion-card h1 {
+  text-align: center;
+  color: #9d6f35;
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+/* Selector de Producto */
+.planificacion-input-box {
+  margin: 10px 0;
+}
+
+.planificacion-select,
+.planificacion-input {
+  width: 100%;
+  height: 40px;
+  padding: 5px 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Botones */
+.planificacion-btn {
+  background-color: #c8b381;
+  color: white;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.planificacion-btn:hover {
+  background-color: #9d743f;
+}
+
+.planificacion-btn-clear {
+  background-color: #e74c3c;
+  color: white;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.planificacion-btn-clear:hover {
+  background-color: #c0392b;
+}
+
+/* Resultados */
+.planificacion-result-box {
+  margin-top: 20px;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.planificacion-history-box {
+  margin-top: 30px;
+  padding: 15px;
+  background-color: #f3f3f3;
+  border-radius: 10px;
+}
+
+.planificacion-table {
+  width: 100%;
+  margin-top: 15px;
+}
+
+.planificacion-table-header,
+.planificacion-table-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  background-color: #f1f1f1;
+  margin-bottom: 8px;
+}
+
+.planificacion-table-header span {
+  font-weight: bold;
+  color: #333;
+}
+
+.planificacion-table-row span {
+  color: #555;
+}
