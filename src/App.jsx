@@ -9,6 +9,7 @@ import Planificacion from './pages/Planificacion';
 import Empresa from './pages/Empresa';
 import ComentariosXClientes from './pages/COmentariosXClientes';
 import CuentasXPagar from './pages/CuentasXPagar';
+import NotFoundPage from './pages/NotFoundPage';
 
 
 const App = () => {
@@ -27,7 +28,8 @@ const App = () => {
       <Route path="/marketing" element={<Marketing />} />
       <Route path="/ventas" element={<Ventas />} />
       <Route path="/planificacion" element={<Planificacion />} />
-          
+      <Route path="*" element={<NotFoundPage />} /> {/* Ruta "catch-all" */}
+
     </Routes>
 </Router>
 

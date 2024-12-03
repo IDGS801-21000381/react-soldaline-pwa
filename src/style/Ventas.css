@@ -1,0 +1,117 @@
+.ventas-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #f9f9f9;
+    justify-content: flex-start;
+}
+
+.ventas-layout .container {
+    padding: 20px;
+}
+
+.ventas-layout .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.ventas-layout .card {
+    width: calc(33.33% - 20px); /* Cada tarjeta ocupa 1/3 del ancho menos el espacio de margen */
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    margin-bottom: 20px;
+    height: 100%;
+}
+
+.ventas-layout .card-img-top {
+    height: 200px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.ventas-layout .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px;
+}
+
+.ventas-layout .card-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.ventas-layout .card-text {
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.ventas-layout button {
+    align-self: flex-start;
+}
+
+@media (max-width: 768px) {
+    .ventas-layout .card {
+        width: calc(50% - 20px); /* En pantallas más pequeñas, dos tarjetas por fila */
+    }
+}
+
+@media (max-width: 480px) {
+    .ventas-layout .card {
+        width: 100%; /* En pantallas pequeñas, una tarjeta por fila */
+    }
+}
+/* Botón flotante */
+.boton-flotante {
+    position: fixed;
+    bottom: 20px; /* Ubicación en la esquina inferior derecha */
+    right: 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    z-index: 1100; /* Más alto que el modal */
+    cursor: pointer;
+}
+
+
+.boton-flotante:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+}
+
+/* Modal personalizado */
+.modal-flotante .modal-content {
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    border: none;
+    background-color: #ffffff;
+}
+.carrito-flotante {
+    position: fixed;
+    bottom: 20px; /* Ajusta según tu preferencia */
+    right: 20px;  /* Ajusta según tu preferencia */
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    width: 300px; /* Ajusta el tamaño del contenedor */
+    max-height: 400px; /* Limita la altura */
+    overflow-y: auto; /* Agrega scroll si hay muchos productos */
+}
+

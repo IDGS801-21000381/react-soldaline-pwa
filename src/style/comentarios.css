@@ -1,0 +1,76 @@
+/* Estilo para los componentes */
+.leads-layout {
+  display: flex;
+}
+
+.leads-card-container {
+  flex: 1;
+  margin: 20px;
+}
+
+.leads-card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.leads-header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.filters select {
+  padding: 8px;
+  margin: 10px;
+}
+
+.leads-list {
+  margin-top: 20px;
+}
+
+.lead-card {
+  background-color: #f9f9f9;
+  margin-bottom: 10px;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.lead-card.active {
+  border-left: 5px solid green;
+}
+
+.lead-card.resolved {
+  border-left: 5px solid blue;
+}
+
+.lead-card.inactive {
+  border-left: 5px solid red;
+}
+
+button {
+  padding: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  min-height: 80px;
+}
+
+textarea::placeholder {
+  color: #aaa;
+}

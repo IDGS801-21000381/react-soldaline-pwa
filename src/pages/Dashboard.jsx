@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Bar, Pie, Line } from "react-chartjs-2"; // Tipos de gráficas de Chart.js
+import { Bar, Pie, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -29,48 +29,39 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
-  const [category, setCategory] = useState("personal");
-  const [timeFilter, setTimeFilter] = useState("semana");
   const [estatusCount, setEstatusCount] = useState({ activo: 0, inactivo: 0 });
+  const [clientes, setClientes] = useState([]);
+  const [showTable, setShowTable] = useState(false);
 
-  // Consumir la API de clientes potenciales
+  // Leer datos del archivo JSON en public/data/clientes.json
   useEffect(() => {
     const fetchClientes = async () => {
       try {
-        const response = await fetch("http://localhost:5055/api/EmpresaCliente/get-status");
+        const response = await fetch("/data/clientes.json");
 
         if (!response.ok) {
-          console.error("Error al obtener los datos de la API");
+          console.error("Error al leer el archivo JSON");
           return;
         }
 
         const data = await response.json();
-        console.log("Datos recibidos de la API:", data);  // Imprimir los datos recibidos en la consola
+        console.log("Datos cargados desde clientes.json:", data);
 
-        // Contar cuántos clientes están en estatus 1 (Activo) y 2 (Inactivo)
+        // Contar los clientes activos e inactivos
         const estatus = { activo: 0, inactivo: 0 };
-        data.forEach(cliente => {
-          if (cliente.Estatus === 1) estatus.activo++;
-          if (cliente.Estatus === 2) estatus.inactivo++;
+        data.clientes.forEach((cliente) => {
+          if (cliente.estatus === 1) estatus.activo++;
+          if (cliente.estatus === 0) estatus.inactivo++;
         });
 
-        setEstatusCount(estatus); // Actualizar el estado con la cantidad de clientes activos e inactivos
-
-        // Imprimir en consola cuántos clientes están activos e inactivos
-        console.log(`Clientes Activos (Estatus 1): ${estatus.activo}`);
-        console.log(`Clientes Inactivos (Estatus 2): ${estatus.inactivo}`);
+        setEstatusCount(estatus);
+        setClientes(data.clientes);
       } catch (error) {
-        console.error("Error al obtener los datos de los clientes:", error);
+        console.error("Error al leer los datos de clientes.json:", error);
       }
     };
 
-    fetchClientes(); // Realizar la consulta inicial
-
-    const interval = setInterval(() => {
-      fetchClientes(); // Hacer la consulta cada 5 segundos
-    }, 5000); // Consultar cada 5 segundos para mantener los datos actualizados
-
-    return () => clearInterval(interval); // Limpiar el intervalo cuando el componente se desmonte
+    fetchClientes();
   }, []);
 
   // Datos de la gráfica de barras
@@ -80,24 +71,23 @@ const Dashboard = () => {
       {
         label: "Clientes por estatus",
         data: [estatusCount.activo, estatusCount.inactivo],
-        backgroundColor: "#9d6f35",
+        backgroundColor: ["#9d6f35", "#d2b48c"],
       },
     ],
   };
 
   // Datos de la gráfica de pastel
   const pieData = {
-    labels: ["Marketing", "Ventas", "Planificación"],
+    labels: ["Activo", "Inactivo"],
     datasets: [
       {
-        label: "Distribución de actividades",
-        data: [30, 50, 20],
-        backgroundColor: ["#9d6f35", "#ba9359", "#423117"],
+        data: [estatusCount.activo, estatusCount.inactivo],
+        backgroundColor: ["#9d6f35", "#d2b48c"],
       },
     ],
   };
 
-  // Datos de la gráfica de línea
+  // Datos de la gráfica de línea (puedes personalizar según tus datos reales)
   const lineData = {
     labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo"],
     datasets: [
@@ -124,31 +114,6 @@ const Dashboard = () => {
             <p>Total de clientes inactivos: {estatusCount.inactivo}</p>
           </div>
 
-          {/* Selectores */}
-          <div className="filters">
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="select-category"
-            >
-              <option value="personal">Personal</option>
-              <option value="ventas">Ventas</option>
-              <option value="monetario">Monetario</option>
-            </select>
-            {category === "monetario" && (
-              <select
-                value={timeFilter}
-                onChange={(e) => setTimeFilter(e.target.value)}
-                className="select-time"
-              >
-                <option value="dia">Día</option>
-                <option value="semana">Semana</option>
-                <option value="mes">Mes</option>
-                <option value="año">Año</option>
-              </select>
-            )}
-          </div>
-
           {/* Gráficas */}
           <div className="charts">
             <div className="chart">
@@ -164,6 +129,56 @@ const Dashboard = () => {
               <Line data={lineData} />
             </div>
           </div>
+
+          {/* Botón para mostrar/ocultar la tabla */}
+          <div className="table-toggle">
+            <button
+              className="btn btn-primary"
+              onClick={() => setShowTable(!showTable)}
+            >
+              {showTable ? "Ocultar registros" : "Ver registros"}
+            </button>
+          </div>
+
+          {/* Tabla de clientes */}
+          {showTable && (
+            <div className="table-container mt-4">
+              <table className="table table-bordered table-striped">
+                <thead className="thead-dark">
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Dirección</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                    <th>Empresa</th>
+                    <th>Dirección Empresa</th>
+                    <th>Teléfono Empresa</th>
+                    <th>Correo Empresa</th>
+                    <th>Sitio Web</th>
+                    <th>Estatus</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {clientes.map((cliente) => (
+                    <tr key={cliente.clienteId}>
+                      <td>{cliente.clienteId}</td>
+                      <td>{cliente.nombreCliente}</td>
+                      <td>{cliente.direccionCliente}</td>
+                      <td>{cliente.telefonoCliente}</td>
+                      <td>{cliente.correoCliente}</td>
+                      <td>{cliente.nombreEmpresa}</td>
+                      <td>{cliente.direccionEmpresa}</td>
+                      <td>{cliente.telefonoEmpresa}</td>
+                      <td>{cliente.correoEmpresa}</td>
+                      <td>{cliente.sitioWeb}</td>
+                      <td>{cliente.estatus === 1 ? "Activo" : "Inactivo"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -171,4 +186,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-

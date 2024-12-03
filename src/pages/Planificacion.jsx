@@ -1,121 +1,70 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Sidebar from "../components/Siderbar";
 import { Card } from 'react-bootstrap'; // Para trabajar con el card de manera sencilla
-import axios from "axios";
 import "../style/Planificacion.css";
 
+const productosIniciales = [
+  { id: 1, nombre: "Puerta de hierro", precio: 1500, cantidad: 5, imagen: "https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-800x450.webp" },
+  { id: 2, nombre: "Reja de ventana", precio: 800, cantidad: 10, imagen: "https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-800x450.webp" },
+  { id: 3, nombre: "Barandal de escalera", precio: 1200, cantidad: 8, imagen: "https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-800x450.webp" },
+  { id: 4, nombre: "Reja", precio: 1200, cantidad: 8, imagen: "https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-800x450.webp" },
+  { id: 5, nombre: "Escalera", precio: 1200, cantidad: 8, imagen: "https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-800x450.webp" }
+];
+
 const Planificacion = () => {
-  const [productos, setProductos] = useState([]);
+  const [productos] = useState(productosIniciales); // Usamos los productos iniciales directamente
   const [selectedProductoId, setSelectedProductoId] = useState(null);
   const [cantidad, setCantidad] = useState('');
   const [resultado, setResultado] = useState(null);
   const [historialProduccion, setHistorialProduccion] = useState([]);
 
-  // Cargar la lista de productos desde la API
-  useEffect(() => {
-    const fetchProductos = async () => {
-      try {
-        const response = await fetch('http://10.16.14.126:5055/api/productos');
-        const data = await response.json();
-        setProductos(data);
-      } catch (error) {
-        console.error('Error fetching productos:', error);
-        alert('No se pudo cargar la lista de productos');
-      }
-    };
-    fetchProductos();
-  }, []);
-
-  // Cargar el historial desde localStorage
-  useEffect(() => {
-    const storedHistorial = localStorage.getItem('historialProduccion');
-    if (storedHistorial) {
-      setHistorialProduccion(JSON.parse(storedHistorial));
+  // Función para calcular el tiempo estimado de producción
+  const handleCalcularTiempo = () => {
+    if (!selectedProductoId || !cantidad) {
+      alert('Por favor, selecciona un producto y una cantidad.');
+      return;
     }
-  }, []);
 
-  // Guardar el historial en localStorage
+    const productoSeleccionado = productos.find(p => p.id === parseInt(selectedProductoId));
+
+    if (productoSeleccionado) {
+      // Simulamos un cálculo de tiempo de producción (en horas)
+      const tiempoEstimadoHoras = (parseInt(cantidad) * 2); // Por ejemplo, cada unidad tarda 2 horas
+      const diasLaborales = Math.ceil(tiempoEstimadoHoras / 8); // Suponiendo una jornada laboral de 8 horas
+
+      setResultado({
+        producto: productoSeleccionado.nombre,
+        cantidad: cantidad,
+        tiempoTotalHoras: tiempoEstimadoHoras,
+        diasLaborales: diasLaborales
+      });
+    }
+  };
+
+  // Función para guardar el historial de producción
   const saveHistorialToLocalStorage = (nuevoRegistro) => {
     const nuevoHistorial = [...historialProduccion, nuevoRegistro];
     setHistorialProduccion(nuevoHistorial);
     localStorage.setItem('historialProduccion', JSON.stringify(nuevoHistorial));
   };
 
-  // Función para calcular el tiempo estimado de producción
-  const handleCalcularTiempo = async () => {
-    if (!selectedProductoId) {
-      alert('Por favor, selecciona un producto.');
-      return;
-    }
-
-    try {
-      const response = await fetch('http://10.16.14.126:5055/api/planificacion/calcularTiempoProduccion', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          FabricacionId: selectedProductoId,
-          Cantidad: parseFloat(cantidad),
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setResultado(data);
-        alert('Cálculo Exitoso');
-      } else {
-        alert(data.message || 'No se pudo calcular el tiempo de producción');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Ocurrió un problema, inténtalo de nuevo.');
-    }
-  };
-
   // Función para manejar el botón "Mandar a Producción"
-  const handleMandarAProduccion = async () => {
-    if (!selectedProductoId) return;
+  const handleMandarAProduccion = () => {
+    if (!selectedProductoId || !cantidad) return;
 
-    try {
-      const produccionResponse = await fetch('http://10.16.14.126:5055/api/produccion/solicitarProduccion', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          usuarioId: 1,
-          FabricacionId: selectedProductoId,
-          Cantidad: parseFloat(cantidad),
-          Descripcion: "Producción generada desde la aplicación",
-        }),
-      });
+    const productoSeleccionado = productos.find(p => p.id === parseInt(selectedProductoId));
+    const nuevoRegistro = {
+      productoId: selectedProductoId,
+      cantidad: parseFloat(cantidad),
+      tiempoTotalHoras: resultado.tiempoTotalHoras,
+      diasLaborales: resultado.diasLaborales,
+      descripcion: "Producción registrada localmente",
+      fechaRegistro: new Date().toLocaleString()
+    };
 
-      const produccionData = await produccionResponse.json();
-
-      if (produccionResponse.ok) {
-        alert('Producción Iniciada');
-        
-        // Guardar en el historial local
-        const nuevoRegistro = {
-          productoId: selectedProductoId,
-          cantidad: parseFloat(cantidad),
-          tiempoTotalHoras: resultado.tiempoTotalHoras,
-          diasLaborales: resultado.diasLaborales,
-          descripcion: "Producción registrada localmente",
-          fechaRegistro: new Date().toLocaleString()
-        };
-
-        saveHistorialToLocalStorage(nuevoRegistro);
-
-      } else {
-        alert('No se pudo iniciar la producción');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Ocurrió un problema, inténtalo de nuevo.');
-    }
+    // Guardar en el historial
+    saveHistorialToLocalStorage(nuevoRegistro);
+    alert('Producción Iniciada');
   };
 
   // Función para limpiar todos los campos de entrada y el resultado
@@ -144,7 +93,7 @@ const Planificacion = () => {
                 <option value="">Seleccione un producto</option>
                 {productos.map((producto) => (
                   <option key={producto.id} value={producto.id}>
-                    {producto.nombreProducto}
+                    {producto.nombre}
                   </option>
                 ))}
               </select>
@@ -169,6 +118,7 @@ const Planificacion = () => {
             {/* Mostrar resultados del cálculo */}
             {resultado && (
               <div className="planificacion-result-box">
+                <p>Producto: {resultado.producto}</p>
                 <p>Cantidad: {resultado.cantidad}</p>
                 <p>Tiempo Total en Horas: {resultado.tiempoTotalHoras}</p>
                 <p>Días Laborales: {resultado.diasLaborales}</p>
@@ -212,4 +162,3 @@ const Planificacion = () => {
 };
 
 export default Planificacion;
-
