@@ -1,70 +1,70 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Sidebar from "../components/Siderbar";
 import "../style/Empleado.css";
 
 const Empleado = () => {
-  const [employees, setEmployees] = useState([]);
-  const [filteredEmployees, setFilteredEmployees] = useState([]);
+  const [companies, setCompanies] = useState([]);
+  const [filteredCompanies, setFilteredCompanies] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const itemsPerPage = 10;
 
-  // Fetch data from API
+  // Load data from local JSON file
   useEffect(() => {
-    axios
-      .get("http://localhost:5055/api/EmpresaCliente/vista")
+    fetch("/data/clientes.json") // Cambia a la ruta relativa al servidor
       .then((response) => {
-        setEmployees(response.data);
-        setFilteredEmployees(response.data);
+        if (!response.ok) {
+          throw new Error("Error al cargar el archivo JSON");
+        }
+        return response.json();
       })
-      .catch((error) => console.error("Error fetching data:", error));
+      .then((data) => {
+        const empresas = data.clientes.map((cliente) => ({
+          idEmpresa: cliente.clienteId,
+          nombreEmpresa: cliente.nombreEmpresa,
+          direccionEmpresa: cliente.direccionEmpresa,
+          correoEmpresa: cliente.correoEmpresa,
+          telefonoEmpresa: cliente.telefonoEmpresa,
+          sitioWeb: cliente.sitioWeb,
+          estatus: cliente.estatus,
+        }));
+        setCompanies(empresas);
+        setFilteredCompanies(empresas);
+      })
+      .catch((error) => console.error("Error cargando datos:", error));
   }, []);
 
   // Handle search input
   const handleSearch = (event) => {
     const term = event.target.value.toLowerCase();
     setSearchTerm(term);
-    setFilteredEmployees(
-      employees.filter((employee) =>
-        employee.NombreCliente.toLowerCase().includes(term)
+    setFilteredCompanies(
+      companies.filter((company) =>
+        company.nombreEmpresa.toLowerCase().includes(term)
       )
     );
     setCurrentPage(1);
   };
 
-  // Handle "Detalles" button
-  const handleDetails = (id) => {
-    axios
-      .get(`http://localhost:5055/api/EmpresaCliente/detalles/${id}`)
-      .then((response) => {
-        setSelectedEmployee(response.data);
-        setIsModalOpen(true);
-      })
-      .catch((error) => console.error("Error fetching details:", error));
-  };
-
   // Pagination logic
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedEmployees = filteredEmployees.slice(
+  const paginatedCompanies = filteredCompanies.slice(
     startIndex,
     startIndex + itemsPerPage
   );
 
-  const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredCompanies.length / itemsPerPage);
 
   return (
     <div className="empleado-container">
       <Sidebar />
       <div className="empleado-content">
-        <h1>Catálogo de Empleados</h1>
+        <h1>Catálogo de Empresas</h1>
         <div className="search-bar">
           <input
             type="text"
-            placeholder="Buscar por nombre"
+            placeholder="Buscar por nombre de empresa"
             value={searchTerm}
             onChange={handleSearch}
           />
@@ -73,30 +73,29 @@ const Empleado = () => {
           <table>
             <thead>
               <tr>
+                <th>ID Empresa</th>
                 <th>Nombre</th>
-                <th>Empresa</th>
-                <th>Correo</th>
                 <th>Dirección</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Sitio Web</th>
                 <th>Estatus</th>
-                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {paginatedEmployees.map((employee) => (
-                <tr key={employee.EmpresaId}>
-                  <td>{employee.NombreCliente}</td>
-                  <td>{employee.NombreEmpresa}</td>
-                  <td>{employee.Correo}</td>
-                  <td>{employee.Direccion}</td>
-                  <td>{employee.Estatus}</td>
+              {paginatedCompanies.map((company) => (
+                <tr key={company.idEmpresa}>
+                  <td>{company.idEmpresa}</td>
+                  <td>{company.nombreEmpresa}</td>
+                  <td>{company.direccionEmpresa}</td>
+                  <td>{company.correoEmpresa}</td>
+                  <td>{company.telefonoEmpresa}</td>
                   <td>
-                    <button
-                      className="details-button"
-                      onClick={() => handleDetails(employee.ClienteId)}
-                    >
-                      Detalles
-                    </button>
+                    <a href={`https://${company.sitioWeb}`} target="_blank" rel="noopener noreferrer">
+                      {company.sitioWeb}
+                    </a>
                   </td>
+                  <td>{company.estatus === 1 ? "Activo" : "Inactivo"}</td>
                 </tr>
               ))}
             </tbody>
@@ -113,17 +112,6 @@ const Empleado = () => {
             </button>
           ))}
         </div>
-        {isModalOpen && selectedEmployee && (
-          <div className="modal">
-            <div className="modal-content">
-              <h2>Detalles del Empleado</h2>
-              <pre>{JSON.stringify(selectedEmployee, null, 2)}</pre>
-              <button className="close-button" onClick={() => setIsModalOpen(false)}>
-                Cerrar
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

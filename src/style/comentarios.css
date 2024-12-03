@@ -1,4 +1,4 @@
-/* Estilo para los componentes */
+/* Estilo general */
 .leads-layout {
   display: flex;
 }
@@ -9,7 +9,9 @@
 }
 
 .leads-card {
-  background-color: #fff;
+  background-color: #2c2c2c;
+  /* Fondo oscuro */
+  color: white;
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -20,46 +22,49 @@
   font-size: 24px;
 }
 
-.filters select {
-  padding: 8px;
-  margin: 10px;
+select {
+  background-color: #333;
+  color: white;
+  padding: 5px;
+  border-radius: 4px;
 }
 
-.leads-list {
+table {
+  width: 100%;
+  border-collapse: collapse;
   margin-top: 20px;
 }
 
-.lead-card {
-  background-color: #f9f9f9;
-  margin-bottom: 10px;
-  padding: 15px;
-  border-radius: 8px;
+table,
+th,
+td {
+  border: 1px solid #444;
+  /* Bordes oscuros */
+  text-align: left;
+  padding: 8px;
 }
 
-.lead-card.active {
-  border-left: 5px solid green;
+th {
+  background-color: #444;
 }
 
-.lead-card.resolved {
-  border-left: 5px solid blue;
+td {
+  text-align: left;
 }
 
-.lead-card.inactive {
-  border-left: 5px solid red;
-}
-
-button {
-  padding: 10px;
-  margin-right: 10px;
+.star {
+  font-size: 18px;
   cursor: pointer;
-  border: none;
-  border-radius: 4px;
-  background-color: #007bff;
-  color: white;
+  color: #ddd;
 }
 
-button:hover {
-  background-color: #0056b3;
+.star.filled {
+  color: #ffc107;
+  /* Color dorado para las estrellas llenas */
+}
+
+.justificacion {
+  margin-top: 20px;
 }
 
 textarea {
@@ -71,6 +76,30 @@ textarea {
   min-height: 80px;
 }
 
-textarea::placeholder {
-  color: #aaa;
+button {
+  padding: 10px 20px;
+  margin-top: 10px;
+  cursor: pointer;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Estilo de la tabla oscura */
+.tabla-estilo {
+  background-color: #333;
+  color: white;
+}
+
+.tabla-estilo th {
+  background-color: #444;
+}
+
+.tabla-estilo td {
+  background-color: #555;
 }

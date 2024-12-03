@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import Sidebar from "../components/Siderbar";
-import Swal from 'sweetalert2'; // Importamos SweetAlert
+import Swal from 'sweetalert2'; // Importamos SweetAlert para confirmar cambios
 import "../style/comentarios.css";
+
 const ComentariosXClientes = () => {
-  // Estados para filtros, datos y justificación
-  const [estatusFiltro, setEstatusFiltro] = useState('Pendiente');
   const [comentarios, setComentarios] = useState([
     {
       id: 1,
       cliente: 'Juan Pérez',
-      tipo: 1, // Queja
+      email: 'juan.perez@gmail.com',
+      telefono: '555-1234',
+      tipo: 'Queja',
       descripcion: 'El producto llegó dañado.',
-      estatus: 0, // Pendiente
+      estatus: 'Pendiente',
       calificacion: 3,
       fecha: '2024-12-01',
       comentario_extendido: '',
@@ -19,54 +20,46 @@ const ComentariosXClientes = () => {
     {
       id: 2,
       cliente: 'María López',
-      tipo: 2, // Devolución
+      email: 'maria.lopez@gmail.com',
+      telefono: '555-5678',
+      tipo: 'Devolución',
       descripcion: 'Solicito devolver un producto.',
-      estatus: 1, // Resuelto
+      estatus: 'Resuelto',
       calificacion: 5,
       fecha: '2024-11-30',
-      comentario_extendido: 'Devolución exitosa',
+      comentario_extendido: 'Devolución exitosa.',
     },
     {
       id: 3,
       cliente: 'Pedro Sánchez',
-      tipo: 4, // Otros
+      email: 'pedro.sanchez@gmail.com',
+      telefono: '555-9876',
+      tipo: 'Otros',
       descripcion: 'Consulta sobre el uso del producto.',
-      estatus: 2, // Cancelado
+      estatus: 'Cancelado',
       calificacion: 4,
       fecha: '2024-11-29',
       comentario_extendido: 'Producto defectuoso.',
     },
   ]);
-  const [motivoResuelto, setMotivoResuelto] = useState(''); // Para almacenar el motivo de resolución
-  const [motivoCancelado, setMotivoCancelado] = useState(''); // Para almacenar el motivo de cancelación
 
-  // Filtrar comentarios por estatus
-  const filtrarComentarios = () =>
-    comentarios.filter((comentario) => {
-      return estatusFiltro === 'Todos' || comentario.estatus.toString() === estatusFiltro;
-    });
+  const [motivo, setMotivo] = useState(''); // Motivo de la justificación
+  const [selectedComentario, setSelectedComentario] = useState(null); // Comentario seleccionado para cambiar
 
-  // Cambiar estatus y justificar si es necesario
+  // Cambiar el estatus y agregar justificación
   const cambiarEstatus = (id, nuevoEstatus) => {
-    let motivo = '';
-    if (nuevoEstatus === 1 && motivoResuelto.trim() === '') {
+    if (nuevoEstatus === 'Resuelto' && motivo.trim() === '') {
       Swal.fire('Error', 'Debe proporcionar un motivo para resolver el comentario', 'error');
       return;
     }
-    if (nuevoEstatus === 2 && motivoCancelado.trim() === '') {
+    if (nuevoEstatus === 'Cancelado' && motivo.trim() === '') {
       Swal.fire('Error', 'Debe proporcionar un motivo para cancelar el comentario', 'error');
       return;
     }
 
-    if (nuevoEstatus === 1) {
-      motivo = motivoResuelto;
-    } else if (nuevoEstatus === 2) {
-      motivo = motivoCancelado;
-    }
-
     Swal.fire({
       title: '¿Estás seguro?',
-      text: `Cambiar el estatus a ${nuevoEstatus === 1 ? 'Resuelto' : 'Cancelado'}.`,
+      text: `Cambiar el estatus a ${nuevoEstatus}.`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, cambiar',
@@ -82,22 +75,27 @@ const ComentariosXClientes = () => {
             return comentario;
           })
         );
-        Swal.fire('Éxito', `El estatus se cambió a ${nuevoEstatus === 1 ? 'Resuelto' : 'Cancelado'}`, 'success');
+        setMotivo(''); // Limpiar motivo
+        setSelectedComentario(null); // Limpiar comentario seleccionado
+        Swal.fire('Éxito', `El estatus se cambió a ${nuevoEstatus}`, 'success');
       }
     });
   };
 
-  // Opciones de estatus
-  const estatus = [
-    { value: 'Todos', label: 'Todos' },
-    { value: '0', label: 'Pendiente' },
-    { value: '1', label: 'Resuelto' },
-    { value: '2', label: 'Cancelado' },
-  ];
+  const calificarComentario = (id, calificacion) => {
+    setComentarios((prevComentarios) =>
+      prevComentarios.map((comentario) => {
+        if (comentario.id === id) {
+          comentario.calificacion = calificacion;
+        }
+        return comentario;
+      })
+    );
+  };
 
   return (
     <div className="leads-layout">
-      <Sidebar /> {/* Consumir el Sidebar */}
+      <Sidebar /> {/* Sidebar */}
 
       <div className="leads-card-container">
         <div className="leads-card">
@@ -105,72 +103,75 @@ const ComentariosXClientes = () => {
             <h1>Comentarios por Cliente</h1>
           </div>
 
-          <div className="filters">
-            <select
-              onChange={(e) => setEstatusFiltro(e.target.value)}
-              value={estatusFiltro}
-            >
-              {estatus.map((est) => (
-                <option key={est.value} value={est.value}>
-                  {est.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
           <div className="leads-list">
-            {filtrarComentarios().map((comentario) => (
-              <div
-                key={comentario.id}
-                className={`lead-card ${
-                  comentario.estatus === 0
-                    ? 'active'
-                    : comentario.estatus === 1
-                    ? 'resolved'
-                    : 'inactive'
-                }`}
-              >
-                <h3>{comentario.cliente}</h3>
-                <p><strong>Tipo:</strong> {comentario.tipo}</p>
-                <p><strong>Descripción:</strong> {comentario.descripcion}</p>
-                <p><strong>Calificación:</strong> {comentario.calificacion}</p>
-                <p><strong>Fecha:</strong> {comentario.fecha}</p>
-                <p><strong>Estatus:</strong> {estatus.find((e) => e.value === comentario.estatus.toString())?.label}</p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Email</th>
+                  <th>Teléfono</th>
+                  <th>Tipo</th>
+                  <th>Descripción</th>
+                  <th>Fecha</th>
+                  <th>Estatus</th>
+                  <th>Acciones</th>
+                  <th>Calificación</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comentarios.map((comentario) => (
+                  <tr key={comentario.id}>
+                    <td>{comentario.cliente}</td>
+                    <td>{comentario.email}</td>
+                    <td>{comentario.telefono}</td>
+                    <td>{comentario.tipo}</td>
+                    <td>{comentario.descripcion}</td>
+                    <td>{comentario.fecha}</td>
+                    <td>{comentario.estatus}</td>
+                    <td>
+                      {/* Solo mostrar el select si el estatus es Pendiente */}
+                      {comentario.estatus === 'Pendiente' && (
+                        <select
+                          onChange={(e) => setSelectedComentario({ id: comentario.id, estatus: e.target.value })}
+                        >
+                          <option value="">Cambiar Estatus</option>
+                          <option value="Resuelto">Resuelto</option>
+                          <option value="Cancelado">Cancelado</option>
+                        </select>
+                      )}
+                    </td>
+                    <td>
+                      {/* Calificación */}
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <span
+                          key={star}
+                          className={`star ${comentario.calificacion >= star ? 'filled' : ''}`}
+                          onClick={() => calificarComentario(comentario.id, star)}
+                        >
+                          ★
+                        </span>
+                      ))}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
-                {/* Mostrar campos para justificación según el estatus */}
-                {comentario.estatus === 1 && (
-                  <>
-                    <p><strong>Comentario Extendendido:</strong> {comentario.comentario_extendido}</p>
-                  </>
-                )}
-                {comentario.estatus === 0 && (
-                  <div>
-                    <button onClick={() => cambiarEstatus(comentario.id, 1)}>
-                      Marcar como Resuelto
-                    </button>
-                    <button onClick={() => cambiarEstatus(comentario.id, 2)}>
-                      Marcar como Cancelado
-                    </button>
-                  </div>
-                )}
-
-                {/* Inputs para justificar los cambios */}
-                {comentario.estatus === 0 && (
-                  <div>
-                    <textarea
-                      placeholder="Motivo para resolver"
-                      value={motivoResuelto}
-                      onChange={(e) => setMotivoResuelto(e.target.value)}
-                    />
-                    <textarea
-                      placeholder="Motivo para cancelar"
-                      value={motivoCancelado}
-                      onChange={(e) => setMotivoCancelado(e.target.value)}
-                    />
-                  </div>
-                )}
+            {/* Si hay un comentario seleccionado y es Pendiente, mostramos el campo de justificación */}
+            {selectedComentario && selectedComentario.estatus && (
+              <div className="justificacion">
+                <textarea
+                  placeholder={`Justificar cambio a ${selectedComentario.estatus}`}
+                  value={motivo}
+                  onChange={(e) => setMotivo(e.target.value)}
+                />
+                <button
+                  onClick={() => cambiarEstatus(selectedComentario.id, selectedComentario.estatus)}
+                >
+                  Guardar Cambio
+                </button>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>
