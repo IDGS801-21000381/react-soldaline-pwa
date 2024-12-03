@@ -13,9 +13,11 @@
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   padding: 20px;
   background-color: #f9f9f9;
+  overflow-y: auto;
+  /* Para el scroll */
 }
 
 .leads-card {
@@ -25,6 +27,8 @@
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
+  /* Separación entre tarjetas */
 }
 
 /* Header */
@@ -60,14 +64,12 @@
   color: #007bff;
 }
 
-/* Botón de registro - más grande */
+/* Botón de registro */
 .leads-register-btn {
   display: block;
   margin: 0 auto 20px;
   width: 100%;
-  /* Ajustado para que sea del mismo tamaño que la barra de búsqueda */
   max-width: 400px;
-  /* Mismo tamaño máximo que la barra de búsqueda */
   background-color: #c8b381;
   color: white;
   padding: 15px;
@@ -81,4 +83,109 @@
 
 .leads-register-btn:hover {
   background-color: #9d743f;
+}
+
+/* Estilo para las tarjetas de cada cliente */
+.lead-card {
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  margin-bottom: 15px;
+  border-left: 10px solid;
+  /* Franja de color a la izquierda */
+}
+
+/* Colores según el estatus */
+.lead-card.active {
+  border-left-color: blue;
+}
+
+.lead-card.inactive {
+  border-left-color: red;
+}
+
+/* Botones de acción */
+.lead-actions button {
+  padding: 8px 12px;
+  border-radius: 5px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.btn-change-status {
+  background-color: #28a745;
+  color: white;
+  border: none;
+}
+
+.btn-change-status:hover {
+  background-color: #218838;
+}
+
+.btn-details {
+  background-color: #007bff;
+  color: white;
+  border: none;
+}
+
+.btn-details:hover {
+  background-color: #0056b3;
+}
+
+.btn-history {
+  background-color: #ffc107;
+  color: white;
+  border: none;
+}
+
+.btn-history:hover {
+  background-color: #e0a800;
+}
+
+/* Estilo del scroll para la lista de clientes */
+.leads-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Estilo para el formulario */
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  margin-top: 20px;
+}
+
+.form-container input {
+  margin-bottom: 10px;
+  padding: 10px;
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.form-container button {
+  background-color: #c8b381;
+  color: white;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.form-container button:hover {
+  background-color: #9d743f;
+}
+
+.form-container h3 {
+  margin-bottom: 20px;
 }

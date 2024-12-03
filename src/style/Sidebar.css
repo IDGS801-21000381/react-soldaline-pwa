@@ -8,6 +8,38 @@
   flex-direction: column;
   justify-content: space-between;
   box-shadow: 4px 0px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease-in-out;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+}
+
+.sidebar.closed {
+  transform: translateX(-100%);
+  /* Oculta el menú */
+}
+
+/* Botón de toggle */
+.sidebar-toggle {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  /* Siempre visible */
+  width: 40px;
+  height: 40px;
+  background-color: #945f10;
+  /* Marrón principal */
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1100;
+  /* Más alto que el sidebar */
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Encabezado */
@@ -15,13 +47,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px 0;
-  text-align: center;
+  padding: 10px 0;
 }
 
 .brand-name {
-  margin-top: 10px;
-  font-size: 24px;
+  margin-top: 5px;
+  font-size: 20px;
   font-weight: bold;
   color: #945f10;
   /* Marrón principal */
@@ -35,14 +66,14 @@
 }
 
 .menu li {
-  margin: 15px 0;
+  margin: 5px 0;
 }
 
 .menu a {
   text-decoration: none;
   display: flex;
   align-items: center;
-  padding: 10px 20px;
+  padding: 8px 15px;
   color: #423117;
   /* Texto oscuro */
   font-weight: bold;
@@ -57,23 +88,23 @@
   /* Texto blanco */
 }
 
-.icon {
-  margin-right: 10px;
-  font-size: 18px;
+.menu .icon {
+  margin-right: 8px;
+  font-size: 16px;
 }
 
 /* Footer */
 .sidebar-footer {
+  padding: 10px;
+  background-color: #d2d1c1;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
-  background-color: #d2d1c1;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Botón de salir */
 .logout {
+  width: 90%;
   text-decoration: none;
   color: white;
   /* Texto blanco */
@@ -83,30 +114,16 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  margin-top: 20px;
-  padding: 15px 20px;
+  margin-top: 10px;
+  padding: 10px;
   border-radius: 8px;
   transition: all 0.3s ease;
-  box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-/* Hover del botón de salir */
 .logout:hover {
   background-color: #ba9359;
   /* Marrón claro */
   color: #423117;
   /* Texto marrón oscuro */
-  box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.3);
   transform: scale(1.05);
 }
-
-.logout .icon {
-  margin-right: 8px;
-  font-size: 20px;
-}
-
-/* Ajustar posición del saludo */
-.sidebar-footer>*:first-child {
-  margin-bottom: 20px;
-}
-

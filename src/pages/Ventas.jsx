@@ -1,3 +1,17 @@
+// // import React from 'react'
+
+// // const Ventas = () => {
+// //   return (
+// //     <div>
+// //       Holas
+// //     </div>
+// //   )
+// // }
+
+// // export default Ventas
+
+
+
 // import React, { useState } from 'react';
 // import { View, FlatList, Text, StyleSheet, Button, TouchableOpacity, Modal, TextInput, ScrollView } from 'react-native';
 // import ProductoCard from '../../components/ProductoCard'; // Asegúrate de tener este componente
@@ -186,3 +200,14 @@
 //         marginBottom: 10,
 //     },
 // });
+import React from 'react'
+
+const Ventas = () => {
+  return (
+    <div>
+      
+    </div>
+  )
+}
+
+export default Ventas
