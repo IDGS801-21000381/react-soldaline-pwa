@@ -41,12 +41,138 @@ const ComentariosXClientes = () => {
       fecha: '2024-11-29',
       comentario_extendido: 'Producto defectuoso.',
     },
+    {
+    "id": 4,
+    "cliente": "Carlos Ruiz",
+    "email": "carlos.ruiz@example.com",
+    "telefono": "555-7890",
+    "tipo": "Queja",
+    "descripcion": "El producto no llegó a tiempo.",
+    "estatus": "Pendiente",
+    "calificacion": 2,
+    "fecha": "2024-12-02",
+    "comentario_extendido": ""
+  },
+  {
+    "id": 5,
+    "cliente": "Ana Martínez",
+    "email": "ana.martinez@example.com",
+    "telefono": "555-2345",
+    "tipo": "Consulta",
+    "descripcion": "¿El producto tiene garantía?",
+    "estatus": "Pendiente",
+    "calificacion": 3,
+    "fecha": "2024-12-02",
+    "comentario_extendido": ""
+  },
+  {
+    "id": 6,
+    "cliente": "Luis Gómez",
+    "email": "luis.gomez@example.com",
+    "telefono": "555-3456",
+    "tipo": "Devolución",
+    "descripcion": "El producto no cumple con las especificaciones.",
+    "estatus": "Resuelto",
+    "calificacion": 4,
+    "fecha": "2024-12-01",
+    "comentario_extendido": "Producto devuelto con éxito."
+  },
+  {
+    "id": 7,
+    "cliente": "Sofía Morales",
+    "email": "sofia.morales@example.com",
+    "telefono": "555-4567",
+    "tipo": "Queja",
+    "descripcion": "El pedido estaba incompleto.",
+    "estatus": "Resuelto",
+    "calificacion": 5,
+    "fecha": "2024-11-30",
+    "comentario_extendido": "Pedido completado después de la queja."
+  },
+  {
+    "id": 8,
+    "cliente": "Jorge Herrera",
+    "email": "jorge.herrera@example.com",
+    "telefono": "555-5678",
+    "tipo": "Consulta",
+    "descripcion": "¿Cuándo llegará mi pedido?",
+    "estatus": "Cancelado",
+    "calificacion": 3,
+    "fecha": "2024-11-29",
+    "comentario_extendido": "Pedido cancelado por falta de stock."
+  },
+  {
+    "id": 9,
+    "cliente": "Gabriela Torres",
+    "email": "gabriela.torres@example.com",
+    "telefono": "555-6789",
+    "tipo": "Otros",
+    "descripcion": "¿Ofrecen descuentos por compras grandes?",
+    "estatus": "Pendiente",
+    "calificacion": 4,
+    "fecha": "2024-12-02",
+    "comentario_extendido": ""
+  },
+  {
+    "id": 10,
+    "cliente": "Ricardo Mendoza",
+    "email": "ricardo.mendoza@example.com",
+    "telefono": "555-7891",
+    "tipo": "Queja",
+    "descripcion": "El producto llegó en mal estado.",
+    "estatus": "Pendiente",
+    "calificacion": 2,
+    "fecha": "2024-12-02",
+    "comentario_extendido": ""
+  },
+  {
+    "id": 11,
+    "cliente": "Mónica Sánchez",
+    "email": "monica.sanchez@example.com",
+    "telefono": "555-8901",
+    "tipo": "Devolución",
+    "descripcion": "Quiero cambiar el producto por otro modelo.",
+    "estatus": "Pendiente",
+    "calificacion": 5,
+    "fecha": "2024-12-01",
+    "comentario_extendido": ""
+  },
+  {
+    "id": 12,
+    "cliente": "Alberto Rojas",
+    "email": "alberto.rojas@example.com",
+    "telefono": "555-9012",
+    "tipo": "Consulta",
+    "descripcion": "¿Puedo recoger el producto en tienda?",
+    "estatus": "Resuelto",
+    "calificacion": 4,
+    "fecha": "2024-11-30",
+    "comentario_extendido": "Consulta resuelta con información sobre la tienda."
+  },
+  {
+    "id": 13,
+    "cliente": "Laura Fernández",
+    "email": "laura.fernandez@example.com",
+    "telefono": "555-0123",
+    "tipo": "Queja",
+    "descripcion": "El producto tiene piezas faltantes.",
+    "estatus": "Pendiente",
+    "calificacion": 1,
+    "fecha": "2024-12-02",
+    "comentario_extendido": ""
+  }
+
   ]);
 
-  const [motivo, setMotivo] = useState(''); // Motivo de la justificación
-  const [selectedComentario, setSelectedComentario] = useState(null); // Comentario seleccionado para cambiar
+  const [currentPage, setCurrentPage] = useState(1); // Página actual
+  const itemsPerPage = 5; // Número de registros por página
 
-  // Cambiar el estatus y agregar justificación
+  const totalPages = Math.ceil(comentarios.length / itemsPerPage); // Número total de páginas
+  const paginatedComentarios = comentarios.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  ); // Registros de la página actual
+
   const cambiarEstatus = (id, nuevoEstatus) => {
     if (nuevoEstatus === 'Resuelto' && motivo.trim() === '') {
       Swal.fire('Error', 'Debe proporcionar un motivo para resolver el comentario', 'error');
@@ -75,8 +201,8 @@ const ComentariosXClientes = () => {
             return comentario;
           })
         );
-        setMotivo(''); // Limpiar motivo
-        setSelectedComentario(null); // Limpiar comentario seleccionado
+        setMotivo('');
+        setSelectedComentario(null);
         Swal.fire('Éxito', `El estatus se cambió a ${nuevoEstatus}`, 'success');
       }
     });
@@ -95,7 +221,7 @@ const ComentariosXClientes = () => {
 
   return (
     <div className="leads-layout">
-      <Sidebar /> {/* Sidebar */}
+      <Sidebar />
 
       <div className="leads-card-container">
         <div className="leads-card">
@@ -119,7 +245,7 @@ const ComentariosXClientes = () => {
                 </tr>
               </thead>
               <tbody>
-                {comentarios.map((comentario) => (
+                {paginatedComentarios.map((comentario) => (
                   <tr key={comentario.id}>
                     <td>{comentario.cliente}</td>
                     <td>{comentario.email}</td>
@@ -129,7 +255,6 @@ const ComentariosXClientes = () => {
                     <td>{comentario.fecha}</td>
                     <td>{comentario.estatus}</td>
                     <td>
-                      {/* Solo mostrar el select si el estatus es Pendiente */}
                       {comentario.estatus === 'Pendiente' && (
                         <select
                           onChange={(e) => setSelectedComentario({ id: comentario.id, estatus: e.target.value })}
@@ -141,7 +266,6 @@ const ComentariosXClientes = () => {
                       )}
                     </td>
                     <td>
-                      {/* Calificación */}
                       {[1, 2, 3, 4, 5].map((star) => (
                         <span
                           key={star}
@@ -157,21 +281,21 @@ const ComentariosXClientes = () => {
               </tbody>
             </table>
 
-            {/* Si hay un comentario seleccionado y es Pendiente, mostramos el campo de justificación */}
-            {selectedComentario && selectedComentario.estatus && (
-              <div className="justificacion">
-                <textarea
-                  placeholder={`Justificar cambio a ${selectedComentario.estatus}`}
-                  value={motivo}
-                  onChange={(e) => setMotivo(e.target.value)}
-                />
-                <button
-                  onClick={() => cambiarEstatus(selectedComentario.id, selectedComentario.estatus)}
-                >
-                  Guardar Cambio
-                </button>
-              </div>
-            )}
+            <div className="pagination">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                Anterior
+              </button>
+              <span>Página {currentPage} de {totalPages}</span>
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+              >
+                Siguiente
+              </button>
+            </div>
           </div>
         </div>
       </div>

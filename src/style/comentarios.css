@@ -46,10 +46,16 @@ td {
 
 th {
   background-color: #444;
+  color: white;
+  /* Texto blanco en encabezados */
 }
 
 td {
   text-align: left;
+  color: black;
+  /* Texto negro en celdas */
+  background-color: white;
+  /* Fondo blanco en celdas */
 }
 
 .star {
@@ -98,6 +104,8 @@ button:hover {
 
 .tabla-estilo th {
   background-color: #444;
+  color: white;
+  /* Texto blanco en encabezados de la tabla oscura */
 }
 
 .tabla-estilo td {

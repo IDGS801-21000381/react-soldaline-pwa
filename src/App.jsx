@@ -24,6 +24,7 @@ const App = () => {
           <Route path="/empresa" element={<Empresa />} />
       <Route path="/Comentarios por cliente" element={<ComentariosXClientes />} />
       <Route path="/Cuentas por pagar" element={<CuentasXPagar />} />
+      <Route path="/enviar-cotizacion/:cotizacion" element={<CuentasXPagar />} />
           ###
       <Route path="/marketing" element={<Marketing />} />
       <Route path="/ventas" element={<Ventas />} />

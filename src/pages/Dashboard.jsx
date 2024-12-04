@@ -121,11 +121,11 @@ const Dashboard = () => {
               <Bar data={barData} />
             </div>
             <div className="chart">
-              <h3>Gráfica de Pastel</h3>
+              <h3>Clientes Potenciales</h3>
               <Pie data={pieData} />
             </div>
             <div className="chart">
-              <h3>Gráfica de Líneas</h3>
+              <h3>Clientes Potenciales</h3>
               <Line data={lineData} />
             </div>
           </div>

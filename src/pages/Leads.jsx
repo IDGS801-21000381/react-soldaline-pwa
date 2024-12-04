@@ -161,7 +161,7 @@ const Leads = () => {
             <header className="leads-header">
               <h1>Clientes Potenciales</h1>
             </header>
-            <div className="leads-search">
+            {/* <div className="leads-search">
               <input
                 type="text"
                 placeholder="Buscar cliente o empresa"
@@ -169,7 +169,7 @@ const Leads = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <i className="search-icon fas fa-search"></i>
-            </div>
+            </div> */}
             <div className="leads-filters">
               <select
                 value={filterStatus}

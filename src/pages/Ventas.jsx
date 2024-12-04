@@ -2,18 +2,24 @@ import React, { useState } from "react";
 import Sidebar from "../components/Siderbar";
 import "../style/Ventas.css"; // Importa el CSS de ventas
 import { Modal, Button, Form } from "react-bootstrap";
-import jsPDF from "jspdf"; // Importa la librería jsPDF
+import jsPDF from "jspdf"; // Importa la librer铆a jsPDF
+import { useNavigate } from "react-router-dom";
 
 
 const productosIniciales = [
-    { id: 1, nombre: "Puerta de hierro", precio: 1500, cantidad: 5, imagen: "https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-800x450.webp" },
-    { id: 2, nombre: "Reja de ventana", precio: 800, cantidad: 10, imagen: "https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-800x450.webp" },
-    { id: 3, nombre: "Barandal de escalera", precio: 1200, cantidad: 8, imagen: "https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-800x450.webp" },
-    { id: 4, nombre: "Reja", precio: 1200, cantidad: 8, imagen: "https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-800x450.webp" },
-    { id: 5, nombre: "Escalera", precio: 1200, cantidad: 8, imagen: "https://ralfvanveen.com/wp-content/uploads/2021/06/Placeholder-_-Glossary-800x450.webp" }
+    { id: 1, nombre: "Puerta de hierro", precio: 1500, cantidad: 5, imagen: "https://i.pinimg.com/550x/96/84/46/9684469dfadc103491352db304e725a8.jpg" },
+    { id: 2, nombre: "Reja de ventana", precio: 800, cantidad: 10, imagen: "https://herreriaresidencial.com/wp-content/uploads/2018/08/CIMG1162.jpg" },
+    { id: 3, nombre: "Barandal de escalera", precio: 1200, cantidad: 8, imagen: "https://i.ytimg.com/vi/q00zUIVejR8/maxresdefault.jpg" },
+    { id: 4, nombre: "Reja", precio: 1200, cantidad: 8, imagen: "https://faesa-4.myshopify.com/cdn/shop/products/a3d2fbb2f61107cd9a0d2a2b51d35833_grande.jpg?v=1468947770" },
+    { id: 5, nombre: "Escalera", precio: 1200, cantidad: 8, imagen: "https://urrea.com/media/catalog/product/T/T/TT2.jpeg?auto=webp&format=pjpg&fit=cover" }
 ];
 
 export default function Ventas() {
+    const navigate = useNavigate(); // Inicializa el hook useNavigate
+
+    const enviarCotizacion = (cotizacion) => {
+        navigate(`/enviar-cotizacion/${cotizacion.id}`, { state: cotizacion });
+    };
     const [productos, setProductos] = useState(productosIniciales);
     const [productosSeleccionados, setProductosSeleccionados] = useState([]);
     const [mostrarLista, setMostrarLista] = useState(false);
@@ -48,6 +54,8 @@ export default function Ventas() {
             subtotal: calcularSubtotal(productosSeleccionados),
             fecha: new Date().toLocaleDateString(),
         };
+
+        console.log(nuevaCotizacion);
         setCotizacionesPendientes([...cotizacionesPendientes, nuevaCotizacion]);
         setProductosSeleccionados([]);
         setMostrarModalDatos(false);
@@ -55,15 +63,13 @@ export default function Ventas() {
 
     
 
-    const generarPDF = () => {
+    const generarPDF = (productos, subtotal, nombreEmpresa, vendedor, fechaFormateada) => {
         const doc = new jsPDF();
-        const fechaFormateada = new Date().toLocaleDateString(); // Fecha actual
-        const total = calcularSubtotal(productosSeleccionados).toFixed(2);
-        
+    
         const htmlContent = `
             <div style="border: 3px solid black; padding: 20px; width: 95%; margin: auto; font-family: Arial, sans-serif;">
                 <h1 style="text-align: center; font-size: 2em; margin-top: 0; font-weight: bold;">SOLDALINE</h1>
-                <h2 style="text-align: center;">Cotización</h2>
+                <h2 style="text-align: center;">Cotizaci贸n</h2>
                 <p>Fecha: ${fechaFormateada}</p>
                 <p>Empresa: ${nombreEmpresa}</p>
                 <p>Vendedor: ${vendedor}</p>
@@ -76,30 +82,35 @@ export default function Ventas() {
                         </tr>
                     </thead>
                     <tbody>
-                        ${productosSeleccionados.map(p => `
+                        ${productos
+                            .map(
+                                (p) => `
                             <tr>
                                 <td style="border: 1px solid black; padding: 10px;">${p.nombre}</td>
                                 <td style="border: 1px solid black; padding: 10px;">${p.cantidad}</td>
                                 <td style="border: 1px solid black; padding: 10px;">$${(p.precio * p.cantidad).toFixed(2)}</td>
                             </tr>
-                        `).join('')}
+                        `
+                            )
+                            .join("")}
                     </tbody>
                 </table>
-                <h3 style="text-align: right; margin-top: 20px;">Total Estimado: $${total}</h3>
-                <p style="text-align: center; font-style: italic; color: gray; margin-top: 20px;">Esta es solo una cotización, no confirma la compra.</p>
+                <h3 style="text-align: right; margin-top: 20px;">Total Estimado: $${subtotal.toFixed(2)}</h3>
+                <p style="text-align: center; font-style: italic; color: gray; margin-top: 20px;">Esta es solo una cotizaci贸n, no confirma la compra.</p>
             </div>
         `;
-        
+    
         doc.html(htmlContent, {
             callback: function (doc) {
-                doc.save('cotizacion.pdf');
+                doc.save("cotizacion.pdf");
             },
             x: 10,
             y: 10,
             width: 180,
-            windowWidth: 650 // Establecer el ancho de la ventana para que se ajuste al contenido
+            windowWidth: 650,
         });
     };
+    
     
   
 
@@ -132,7 +143,7 @@ export default function Ventas() {
                     className="boton-flotante"
                     onClick={() => setMostrarLista(!mostrarLista)}
                 >
-                    {mostrarLista ? "Ocultar Carrito" : "🛒"}
+                    {mostrarLista ? "Ocultar Carrito" : "馃洅"}
                 </Button>
 
                 {mostrarLista && (
@@ -151,7 +162,7 @@ export default function Ventas() {
                                 variant="success"
                                 onClick={() => setMostrarModalDatos(true)}
                             >
-                                Generar Cotización
+                                Generar Cotizaci贸n
                             </Button>
                         </div>
                     </div>
@@ -159,7 +170,9 @@ export default function Ventas() {
 
                 {/* Modal para ingresar la cantidad */}
                 <Modal show={mostrarModalCantidad} onHide={() => setMostrarModalCantidad(false)}>
-                    <Modal.Header closeButton>
+            <br />
+            <br/>
+                <Modal.Header >
                         <Modal.Title>Ingrese la Cantidad</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
@@ -187,7 +200,7 @@ export default function Ventas() {
                 </Modal>
 
                 <Modal show={mostrarModalDatos} onHide={() => setMostrarModalDatos(false)}>
-                    <Modal.Header closeButton>
+                    <Modal.Header >
                         <Modal.Title>Ingrese los datos</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
@@ -212,7 +225,7 @@ export default function Ventas() {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="success" onClick={guardarCotizacion}>
-                            Guardar Cotización
+                            Guardar Cotizaci贸n
                         </Button>
                         <Button variant="danger" onClick={() => setMostrarModalDatos(false)}>
                             Cancelar
@@ -236,9 +249,28 @@ export default function Ventas() {
                     </li>
                 ))}
             </ul>
-            <Button variant="secondary" onClick={generarPDF}>
-                Generar PDF
-            </Button>
+            <Button
+    variant="secondary"
+    onClick={() =>
+        generarPDF(
+            cotizacion.productos,
+            cotizacion.subtotal,
+            cotizacion.nombreEmpresa,
+            cotizacion.vendedor,
+            cotizacion.fecha
+        )
+    }
+>
+    Generar PDF
+</Button>
+<Button
+                            variant="primary"
+                            className="ms-2"
+                            onClick={() => enviarCotizacion(cotizacion)}
+                        >
+                            Enviar Cotizaci贸n
+                        </Button>
+
         </div>
     </div>
 ))}
