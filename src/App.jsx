@@ -10,6 +10,7 @@ import Empresa from './pages/Empresa';
 import ComentariosXClientes from './pages/COmentariosXClientes';
 import CuentasXPagar from './pages/CuentasXPagar';
 import NotFoundPage from './pages/NotFoundPage';
+import HistorialComunicacion from './pages/HistorialComunicacion';
 
 
 const App = () => {
@@ -25,7 +26,7 @@ const App = () => {
       <Route path="/Comentarios por cliente" element={<ComentariosXClientes />} />
       <Route path="/Cuentas por pagar" element={<CuentasXPagar />} />
       <Route path="/enviar-cotizacion/:cotizacion" element={<CuentasXPagar />} />
-          ###
+      <Route path="/Historial" element={<HistorialComunicacion />} />
       <Route path="/marketing" element={<Marketing />} />
       <Route path="/ventas" element={<Ventas />} />
       <Route path="/planificacion" element={<Planificacion />} />

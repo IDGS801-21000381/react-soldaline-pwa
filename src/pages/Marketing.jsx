@@ -1,129 +1,203 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "../components/Siderbar";
+import Sidebar from "../components/Sidebar";
 
-
-const EcommerceClients = () => {
-  const [clients, setClients] = useState([]); // Datos de clientes
-  const [filteredClients, setFilteredClients] = useState([]);
+const MarketingModule = () => {
+  const [clientes, setClientes] = useState([]);
+  const [clientesFiltrados, setClientesFiltrados] = useState([]);
+  const [clientesSeleccionados, setClientesSeleccionados] = useState([]);
+  const [nombrePromocion, setNombrePromocion] = useState("");
+  const [descripcion, setDescripcion] = useState("");
+  const [linkImagen, setLinkImagen] = useState("");
+  const [fechaVencimiento, setFechaVencimiento] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [promocionCreada, setPromocionCreada] = useState(false);
 
-  const itemsPerPage = 10;
+  const API_URL =
+    "https://bazar20241109230927.azurewebsites.net/api/Usuario/getAllEmpleados";
 
-  // Cargar datos desde un archivo JSON
   useEffect(() => {
-    fetch("/data/marketing.json") // Cambia a la ruta relativa al servidor
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Error al cargar el archivo JSON");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const clientsData = data.clientEcommers.map((client) => ({
-          id: client.Id,
-          nombreUsuario: client.Nombre,
-          nombres: client.Nombres,
-          apellidoP: client.ApellidoP,
-          apellidoM: client.ApellidoM,
-          correo: client.Correo,
-          direccion: client.Direccion,
-          tarjeta: client.Tarjeta,
-          urlImagen: client.UrlImage,
-        }));
-        setClients(clientsData);
-        setFilteredClients(clientsData);
-      })
-      .catch((error) => console.error("Error cargando datos:", error));
+    fetchClientes();
   }, []);
 
-  // Manejar búsqueda
+  const fetchClientes = async () => {
+    try {
+      const response = await fetch(API_URL);
+      const data = await response.json();
+      const clientesFiltrados = data.filter(
+        (empleado) => empleado.rol === "cliente"
+      );
+      setClientes(clientesFiltrados);
+      setClientesFiltrados(clientesFiltrados);
+    } catch (error) {
+      console.error("Error al cargar los datos:", error);
+      alert("No se pudieron cargar los datos.");
+    }
+  };
+
   const handleSearch = (event) => {
     const term = event.target.value.toLowerCase();
     setSearchTerm(term);
-    setFilteredClients(
-      clients.filter(
-        (client) =>
-          client.nombreUsuario.toLowerCase().includes(term) ||
-          client.nombres.toLowerCase().includes(term) ||
-          client.apellidoP.toLowerCase().includes(term)
+    setClientesFiltrados(
+      clientes.filter(
+        (cliente) =>
+          cliente.nombre.toLowerCase().includes(term) ||
+          cliente.direccion.toLowerCase().includes(term) ||
+          cliente.correo.toLowerCase().includes(term)
       )
     );
-    setCurrentPage(1);
   };
 
-  // Lógica de paginación
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedClients = filteredClients.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+  const seleccionarCliente = (clienteId) => {
+    setClientesSeleccionados((prevSeleccionados) => {
+      if (prevSeleccionados.includes(clienteId)) {
+        return prevSeleccionados.filter((id) => id !== clienteId);
+      } else {
+        return [...prevSeleccionados, clienteId];
+      }
+    });
+  };
 
-  const totalPages = Math.ceil(filteredClients.length / itemsPerPage);
+  const enviarCorreos = async () => {
+    if (!nombrePromocion || !descripcion) {
+      alert("Por favor completa todos los campos de la promoción.");
+      return;
+    }
+
+    const destinatarios = clientesSeleccionados.length
+      ? clientesSeleccionados.map((id) =>
+          clientes.find((c) => c.id === id).correo
+        )
+      : clientes.map((c) => c.correo);
+
+    const emailData = {
+      to: destinatarios,
+      subject: nombrePromocion,
+      body: `
+        <h1>${nombrePromocion}</h1>
+        <p>${descripcion}</p>
+        <img src="${linkImagen}" alt="Imagen de la promoción" />
+        <p><strong>Válido hasta: ${fechaVencimiento}</strong></p>
+      `,
+    };
+
+    try {
+      const response = await fetch("https://localhost:7233/api/Email/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(emailData),
+      });
+
+      if (response.ok) {
+        alert("Correos enviados exitosamente.");
+      } else {
+        const error = await response.json();
+        alert(`No se pudieron enviar los correos: ${error.error}`);
+      }
+    } catch (error) {
+      console.error("Error al enviar correos:", error);
+      alert("Ocurrió un error al enviar los correos.");
+    }
+  };
+
+  const enviarPromocion = () => {
+    if (clientesSeleccionados.length === 0) {
+      alert("No se han seleccionado clientes.");
+      return;
+    }
+
+    if (window.confirm("¿Deseas enviar esta promoción a los clientes seleccionados?")) {
+      enviarCorreos();
+    }
+  };
+
+  const enviarPromocionATodos = () => {
+    if (window.confirm("¿Deseas enviar esta promoción a todos los clientes?")) {
+      enviarCorreos();
+    }
+  };
 
   return (
     <div className="marketing-container">
       <Sidebar />
       <div className="marketing-content">
-        <h1>Clientes de Ecommerce</h1>
-        <div className="search-bar">
-          <input
-            type="text"
-            placeholder="Buscar cliente por nombre, usuario o apellido"
-            value={searchTerm}
-            onChange={handleSearch}
-          />
-        </div>
-        <div className="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Usuario</th>
-                <th>Nombre</th>
-                <th>Correo</th>
-                <th>Dirección</th>
-                <th>Tarjeta</th>
-                <th>Imagen</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedClients.map((client) => (
-                <tr key={client.id}>
-                  <td>{client.id}</td>
-                  <td>{client.nombreUsuario}</td>
-                  <td>
-                    {client.nombres} {client.apellidoP} {client.apellidoM}
-                  </td>
-                  <td>{client.correo}</td>
-                  <td>{client.direccion}</td>
-                  <td>{client.tarjeta}</td>
-                  <td>
-                    <img
-                      src={client.urlImagen}
-                      alt={`Imagen de ${client.nombreUsuario}`}
-                      style={{ width: "50px", height: "50px", borderRadius: "50%" }}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="pagination">
-          {Array.from({ length: totalPages }, (_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentPage(index + 1)}
-              className={currentPage === index + 1 ? "active" : ""}
-            >
-              {index + 1}
+        {promocionCreada ? (
+          <>
+            <h1>Seleccionar Clientes</h1>
+            <input
+              type="text"
+              placeholder="Buscar cliente"
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+            <div className="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Dirección</th>
+                    <th>Seleccionar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {clientesFiltrados.map((cliente) => (
+                    <tr key={cliente.id}>
+                      <td>{cliente.nombre}</td>
+                      <td>{cliente.correo}</td>
+                      <td>{cliente.direccion}</td>
+                      <td>
+                        <input
+                          type="checkbox"
+                          checked={clientesSeleccionados.includes(cliente.id)}
+                          onChange={() => seleccionarCliente(cliente.id)}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <button onClick={enviarPromocionATodos}>Enviar a Todos</button>
+            <button onClick={enviarPromocion}>
+              Enviar a Seleccionados ({clientesSeleccionados.length})
             </button>
-          ))}
-        </div>
+          </>
+        ) : (
+          <>
+            <h1>Crear Promoción</h1>
+            <div className="form-group">
+              <input
+                type="text"
+                placeholder="Nombre de la promoción"
+                value={nombrePromocion}
+                onChange={(e) => setNombrePromocion(e.target.value)}
+              />
+              <textarea
+                placeholder="Descripción"
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Link de la imagen"
+                value={linkImagen}
+                onChange={(e) => setLinkImagen(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Fecha de vencimiento"
+                value={fechaVencimiento}
+                onChange={(e) => setFechaVencimiento(e.target.value)}
+              />
+            </div>
+            <button onClick={() => setPromocionCreada(true)}>
+              Crear Promoción
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
 };
 
-export default EcommerceClients;
+export default MarketingModule;
