@@ -16,7 +16,11 @@ const Planificacion = () => {
       try {
         const response = await fetch('http://localhost:5055/api/Productos/getAll');
         const data = await response.json();
-        setProductos(data);
+        if (Array.isArray(data) && data.length > 0) {
+          setProductos(data);
+        } else {
+          console.error("No se encontraron productos.");
+        }
       } catch (error) {
         console.error('Error fetching productos:', error);
         alert('No se pudo cargar la lista de productos');
@@ -29,7 +33,12 @@ const Planificacion = () => {
   useEffect(() => {
     const storedHistorial = localStorage.getItem('historialProduccion');
     if (storedHistorial) {
-      setHistorialProduccion(JSON.parse(storedHistorial));
+      const parsedHistorial = JSON.parse(storedHistorial);
+      if (Array.isArray(parsedHistorial)) {
+        setHistorialProduccion(parsedHistorial);
+      } else {
+        console.error("No hay historial válido en localStorage.");
+      }
     }
   }, []);
 
@@ -42,8 +51,8 @@ const Planificacion = () => {
 
   // Función para calcular las estimaciones de producción
   const handleCalcularTiempo = async () => {
-    if (!selectedProductoId) {
-      alert('Por favor selecciona un producto.');
+    if (!selectedProductoId || !cantidad) {
+      alert('Por favor selecciona un producto y una cantidad.');
       return;
     }
 
@@ -148,11 +157,15 @@ const Planificacion = () => {
                 className="planificacion-select"
               >
                 <option value="">Seleccione un producto</option>
-                {productos.map((producto) => (
-                  <option key={producto.id} value={producto.id}>
-                    {producto.nombreProducto}
-                  </option>
-                ))}
+                {productos.length > 0 ? (
+                  productos.map((producto) => (
+                    <option key={producto.id} value={producto.id}>
+                      {producto.nombreProducto}
+                    </option>
+                  ))
+                ) : (
+                  <option disabled>No hay productos disponibles</option>
+                )}
               </select>
             </div>
 
@@ -193,22 +206,26 @@ const Planificacion = () => {
             {/* Mostrar el historial de producciones */}
             <div className="planificacion-history-box">
               <Card.Title>Historial de Producción</Card.Title>
-              <div className="planificacion-table">
-                <div className="planificacion-table-header">
-                  <span>Cantidad</span>
-                  <span>Horas</span>
-                  <span>Días</span>
-                  <span>Fecha</span>
-                </div>
-                {historialProduccion.map((registro, index) => (
-                  <div key={index} className="planificacion-table-row">
-                    <span>{registro.cantidad}</span>
-                    <span>{registro.tiempoTotalHoras}</span>
-                    <span>{registro.diasLaborales}</span>
-                    <span>{registro.fechaRegistro}</span>
+              {historialProduccion.length > 0 ? (
+                <div className="planificacion-table">
+                  <div className="planificacion-table-header">
+                    <span>Cantidad</span>
+                    <span>Horas</span>
+                    <span>Días</span>
+                    <span>Fecha</span>
                   </div>
-                ))}
-              </div>
+                  {historialProduccion.map((registro, index) => (
+                    <div key={index} className="planificacion-table-row">
+                      <span>{registro.cantidad}</span>
+                      <span>{registro.tiempoTotalHoras}</span>
+                      <span>{registro.diasLaborales}</span>
+                      <span>{registro.fechaRegistro}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p>No hay historial de producción disponible.</p>
+              )}
             </div>
           </Card.Body>
         </Card>

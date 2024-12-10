@@ -9,6 +9,7 @@ const Login = () => {
     const [contrasenia, setContrasenia] = useState(''); // Estado para la contraseña
     const [error, setError] = useState(''); // Estado para mostrar el error
 
+  
     const handleLogin = async (e) => {
         e.preventDefault(); // Evita el comportamiento por defecto del formulario
 
@@ -24,7 +25,7 @@ const Login = () => {
 
         // Realizar la solicitud de login
         try {
-            const response = await fetch('http://localhost:5055/api/Usuario/login', {
+            const response = await fetch('https://bazar20241109230927.azurewebsites.net/api/Usuario/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

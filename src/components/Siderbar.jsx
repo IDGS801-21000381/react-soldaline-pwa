@@ -80,6 +80,12 @@ const Sidebar = ({ username }) => {
                                 <FaUserTie className="icon" />
                                 <span>Clientes Potenciales</span>
                             </Link>
+              </li>
+              <li>
+                            <Link to="/Historial">
+                                <FaUserTie className="icon" />
+                                <span>Historial de comunicacion</span>
+                            </Link>
                         </li>
                         <li>
                             <Link to="/marketing">
