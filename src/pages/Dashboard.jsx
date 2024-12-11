@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Bar, Pie } from "react-chartjs-2";
-import * as XLSX from "xlsx";
 import dayjs from "dayjs";
 import {
   Chart as ChartJS,
@@ -21,7 +20,6 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("ventas");
   const [salesData, setSalesData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [clientData, setClientData] = useState([]);
   const [clientStats, setClientStats] = useState({ concretos: 0, cancelados: 0 });
   const [filter, setFilter] = useState("mes");
 
@@ -49,7 +47,6 @@ const Dashboard = () => {
         const concretos = data.filter(client => client.estatus === 1).length;
         const cancelados = data.filter(client => client.estatus !== 1).length;
         setClientStats({ concretos, cancelados });
-        setClientData(data);
       } catch (error) {
         console.error("Error al obtener los clientes:", error);
       }
@@ -80,8 +77,8 @@ const Dashboard = () => {
       {
         label: "Total de Ventas",
         data: filteredData.map(item => item.totalVenta),
-        backgroundColor: "#4caf50",
-        borderColor: "#388e3c",
+        backgroundColor: "#9d743f",
+        borderColor: "#aba596",
         borderWidth: 1,
       },
     ],
@@ -92,21 +89,8 @@ const Dashboard = () => {
     datasets: [
       {
         data: [clientStats.concretos, clientStats.cancelados],
-        backgroundColor: ["#4caf50", "#f44336"],
-        hoverBackgroundColor: ["#388e3c", "#d32f2f"],
-      },
-    ],
-  };
-
-  const clientBarChartData = {
-    labels: ["Concretos", "Cancelados"],
-    datasets: [
-      {
-        label: "Clientes",
-        data: [clientStats.concretos, clientStats.cancelados],
-        backgroundColor: ["#4caf50", "#f44336"],
-        borderColor: ["#388e3c", "#d32f2f"],
-        borderWidth: 1,
+        backgroundColor: ["#9d743f", "#aba596"],
+        hoverBackgroundColor: ["#7f5d32", "#8d8b7e"],
       },
     ],
   };
@@ -115,54 +99,73 @@ const Dashboard = () => {
     <div className="dashboard-layout">
       <Sidebar />
       <div className="dashboard-container">
-        <h1>Dashboard</h1>
+        <h1 className="dashboard-title">Dashboard</h1>
         <div className="tab-container">
-          <button className={activeTab === "ventas" ? "active" : ""} onClick={() => setActiveTab("ventas")}>
+          <button
+            className={`tab-button ${activeTab === "ventas" ? "active" : ""}`}
+            onClick={() => setActiveTab("ventas")}
+          >
             Ventas
           </button>
-          <button className={activeTab === "clientes" ? "active" : ""} onClick={() => setActiveTab("clientes")}>
+          <button
+            className={`tab-button ${activeTab === "clientes" ? "active" : ""}`}
+            onClick={() => setActiveTab("clientes")}
+          >
             Clientes
           </button>
         </div>
-        {activeTab === "ventas" && (
-          <div>
-            <div className="tab-filters">
-              <button onClick={() => setFilter("mes")}>Último Mes</button>
-              <button onClick={() => setFilter("semana")}>Última Semana</button>
-              <button onClick={() => setFilter("dia")}>Hoy</button>
-            </div>
-            <div className="charts">
-              <div className="chart">
-                <h3>Total de Ventas</h3>
-                <Bar data={salesChartData} />
+        <div className="content">
+          {activeTab === "ventas" && (
+            <div>
+              <div className="filters">
+                <button
+                  className={`filter-button ${filter === "mes" ? "selected" : ""}`}
+                  onClick={() => setFilter("mes")}
+                >
+                  Último Mes
+                </button>
+                <button
+                  className={`filter-button ${filter === "semana" ? "selected" : ""}`}
+                  onClick={() => setFilter("semana")}
+                >
+                  Última Semana
+                </button>
+                <button
+                  className={`filter-button ${filter === "dia" ? "selected" : ""}`}
+                  onClick={() => setFilter("dia")}
+                >
+                  Hoy
+                </button>
+              </div>
+              <div className="charts">
+                <div className="card chart-card">
+                  <h3 className="card-title">Total de Ventas</h3>
+                  <Bar data={salesChartData} />
+                </div>
               </div>
             </div>
-          </div>
-        )}
-        {activeTab === "clientes" && (
-          <div>
-            <div className="summary-cards">
-              <div className="card">
-                <h3>Concretos</h3>
-                <p>{clientStats.concretos}</p>
+          )}
+          {activeTab === "clientes" && (
+            <div>
+              <div className="summary-cards">
+                <div className="card summary-card">
+                  <h3>Concretos</h3>
+                  <p>{clientStats.concretos}</p>
+                </div>
+                <div className="card summary-card">
+                  <h3>Cancelados</h3>
+                  <p>{clientStats.cancelados}</p>
+                </div>
               </div>
-              <div className="card">
-                <h3>Cancelados</h3>
-                <p>{clientStats.cancelados}</p>
-              </div>
-            </div>
-            <div className="charts">
-              <div className="chart">
-                <h3>Distribución de Clientes</h3>
-                <Pie data={clientChartData} />
-              </div>
-              <div className="chart">
-                <h3>Clientes por Tipo</h3>
-                <Bar data={clientBarChartData} />
+              <div className="charts">
+                <div className="card chart-card">
+                  <h3 className="card-title">Distribución de Clientes</h3>
+                  <Pie data={clientChartData} />
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
