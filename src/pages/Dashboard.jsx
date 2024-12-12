@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Bar, Pie } from "react-chartjs-2";
+import { Bar, Pie, Line } from "react-chartjs-2";
 import dayjs from "dayjs";
 import {
   Chart as ChartJS,
@@ -10,11 +10,13 @@ import {
   Tooltip,
   Legend,
   ArcElement,
+  LineElement,
+  PointElement,
 } from "chart.js";
 import Sidebar from "../components/Siderbar";
 import "../style/Dashboard.css";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, LineElement, PointElement);
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("ventas");
@@ -84,6 +86,19 @@ const Dashboard = () => {
     ],
   };
 
+  const salesLineData = {
+    labels: filteredData.map(item => dayjs(item.fecha).format("DD-MM-YYYY")),
+    datasets: [
+      {
+        label: "Ingreso Diario ($)",
+        data: filteredData.map(item => item.totalVenta),
+        borderColor: "#ba9359",
+        backgroundColor: "rgba(186, 147, 89, 0.2)",
+        tension: 0.4,
+      },
+    ],
+  };
+
   const clientChartData = {
     labels: ["Concretos", "Cancelados"],
     datasets: [
@@ -95,11 +110,24 @@ const Dashboard = () => {
     ],
   };
 
+  const clientBarData = {
+    labels: ["Concretos", "Cancelados"],
+    datasets: [
+      {
+        label: "Clientes",
+        data: [clientStats.concretos, clientStats.cancelados],
+        backgroundColor: "#9d743f",
+        borderColor: "#aba596",
+        borderWidth: 1,
+      },
+    ],
+  };
+
   return (
     <div className="dashboard-layout">
       <Sidebar />
-      <div className="dashboard-container">
-        <h1 className="dashboard-title">Dashboard</h1>
+      <div className="dashboard-content">
+        <h1 className="card-title">Dashboard</h1>
         <div className="tab-container">
           <button
             className={`tab-button ${activeTab === "ventas" ? "active" : ""}`}
@@ -142,6 +170,10 @@ const Dashboard = () => {
                   <h3 className="card-title">Total de Ventas</h3>
                   <Bar data={salesChartData} />
                 </div>
+                <div className="card chart-card">
+                  <h3 className="card-title">Ingreso Diario</h3>
+                  <Line data={salesLineData} />
+                </div>
               </div>
             </div>
           )}
@@ -161,6 +193,10 @@ const Dashboard = () => {
                 <div className="card chart-card">
                   <h3 className="card-title">Distribución de Clientes</h3>
                   <Pie data={clientChartData} />
+                </div>
+                <div className="card chart-card">
+                  <h3 className="card-title">Clientes</h3>
+                  <Bar data={clientBarData} />
                 </div>
               </div>
             </div>

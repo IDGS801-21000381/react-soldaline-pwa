@@ -14,7 +14,7 @@ const Planificacion = () => {
   useEffect(() => {
     const fetchProductos = async () => {
       try {
-        const response = await fetch('http://localhost:5055/api/Productos/getAll');
+        const response = await fetch('https://bazar20241109230927.azurewebsites.net/api/Productos/getAll');
         const data = await response.json();
         if (Array.isArray(data) && data.length > 0) {
           setProductos(data);
@@ -57,7 +57,7 @@ const Planificacion = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5055/api/Planificacion/calcularTiempoProduccion', {
+      const response = await fetch('https://bazar20241109230927.azurewebsites.net/api/Planificacion/calcularTiempoProduccion', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ const Planificacion = () => {
         ],
       };
 
-      const produccionResponse = await fetch('http://localhost:5055/api/produccion/solicitarProduccion', {
+      const produccionResponse = await fetch('https://bazar20241109230927.azurewebsites.net/api/produccion/solicitarProduccion', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

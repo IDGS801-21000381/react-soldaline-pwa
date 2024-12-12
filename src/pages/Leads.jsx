@@ -67,7 +67,7 @@ const Leads = () => {
     }
 
     try {
-      await axios.post("http://localhost:5055/api/EmpresaCliente/register", formData);
+      await axios.post("https://bazar20241109230927.azurewebsites.net/api/EmpresaCliente/register", formData);
       Swal.fire("Éxito", "Cliente registrado correctamente.", "success");
       setShowForm(false);
       fetchLeads();
@@ -80,7 +80,7 @@ const Leads = () => {
   const fetchLeads = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:5055/api/EmpresaCliente/vista");
+      const response = await axios.get("https://bazar20241109230927.azurewebsites.net/api/EmpresaCliente/vista");
       setLeads(response.data);
       setFilteredLeads(response.data);
     } catch (error) {
@@ -101,7 +101,7 @@ const Leads = () => {
     }
 
     try {
-      const response = await axios.get(`http://localhost:5055/api/EmpresaCliente/buscar?searchTerm=${term}`);
+      const response = await axios.get(`https://bazar20241109230927.azurewebsites.net/api/buscar?searchTerm=${term}`);
       setFilteredLeads(response.data);
     } catch (error) {
       console.error("Error al buscar leads:", error);
@@ -214,6 +214,7 @@ const Leads = () => {
                   onChange={(e) => setFormData({ ...formData, nombreEmpresa: e.target.value })}
                   required
                 />
+                {/* parte dos  */}
               </div>
               <div className="form-group">
                 <label htmlFor="direccionEmpresa">Dirección de la Empresa</label>

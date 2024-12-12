@@ -1,0 +1,170 @@
+.empresa-container {
+  display: flex;
+}
+
+.card-general {
+  margin: 20px auto;
+  padding: 20px;
+  background: #aba596;
+  border-radius: 15px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 90%;
+  text-align: center;
+}
+
+.titulo {
+  font-size: 2rem;
+  color: #5e5952;
+  margin-bottom: 20px;
+}
+
+.search-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+input[type="text"] {
+  padding: 10px;
+  border: 1px solid #5e5952;
+  border-radius: 5px;
+  width: 70%;
+}
+
+.btn-agregar {
+  background-color: #9d743f;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-agregar:hover {
+  background-color: #5e5952;
+}
+
+.form-container {
+  margin-top: 20px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-group label {
+  font-size: 1rem;
+  color: #5e5952;
+}
+
+input[type="text"],
+input[type="email"] {
+  padding: 10px;
+  border: 1px solid #5e5952;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.btn-guardar {
+  background-color: #9d743f;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-guardar:hover {
+  background-color: #5e5952;
+}
+
+.btn-cancelar {
+  background-color: #aba596;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.btn-cancelar:hover {
+  background-color: #5e5952;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #5e5952;
+  color: white;
+}
+
+.pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.pagination button {
+  background-color: #9d743f;
+  color: white;
+  padding: 5px 10px;
+  margin: 0 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.pagination button.active {
+  background-color: #5e5952;
+}
+
+.pagination button:hover {
+  background-color: #5e5952;
+}
+.card-large {
+  background-color: #aba596;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px auto;
+  width: 90%;
+  max-width: 1200px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-agregar,
+.btn-guardar,
+.btn-cancelar {
+  background-color: #9d743f;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.btn-agregar:hover,
+.btn-guardar:hover,
+.btn-cancelar:hover {
+  background-color: #5e5952;
+}

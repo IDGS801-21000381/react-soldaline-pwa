@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 import Sidebar from "../components/Siderbar";
+import "../style/historial.css";
 
 const HistorialComunicacion = () => {
   const [clientes, setClientes] = useState([]);
@@ -31,7 +33,11 @@ const HistorialComunicacion = () => {
       setClientes(clientesData);
     } catch (error) {
       console.error(error);
-      alert("Error: No se pudieron cargar los clientes.");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudieron cargar los clientes.",
+      });
     }
   };
 
@@ -48,7 +54,11 @@ const HistorialComunicacion = () => {
       setHistorial(historialData);
     } catch (error) {
       console.error(error);
-      alert("Error: No se pudo cargar el historial de comunicación.");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo cargar el historial de comunicación.",
+      });
     } finally {
       setLoadingHistorial(false);
     }
@@ -66,7 +76,11 @@ const HistorialComunicacion = () => {
 
   const handleSubmit = async () => {
     if (!selectedCliente) {
-      alert("Error: Por favor selecciona un cliente.");
+      Swal.fire({
+        icon: "warning",
+        title: "Error",
+        text: "Por favor selecciona un cliente.",
+      });
       return;
     }
 
@@ -91,15 +105,27 @@ const HistorialComunicacion = () => {
       );
 
       if (response.ok) {
-        alert("Éxito: Historial de comunicación registrado.");
+        Swal.fire({
+          icon: "success",
+          title: "Éxito",
+          text: "Historial de comunicación registrado.",
+        });
         fetchHistorial(selectedCliente.clienteId);
         setShowForm(false);
       } else {
-        alert("Error: No se pudo registrar el historial.");
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudo registrar el historial.",
+        });
       }
     } catch (error) {
       console.error(error);
-      alert("Error: Ocurrió un error al registrar el historial.");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Ocurrió un error al registrar el historial.",
+      });
     }
   };
 
@@ -151,18 +177,22 @@ const HistorialComunicacion = () => {
                   >
                     <p>📅 {item.fechaComunicacion}</p>
                     <p>
-                      Tipo:{" "}
+                      Tipo: {" "}
                       {
-                        ["Correo", "Videollamada", "Llamada", "Red Social", "Presencial"][
-                          item.tipoComunicacion - 1
-                        ]
+                        [
+                          "Correo",
+                          "Videollamada",
+                          "Llamada",
+                          "Red Social",
+                          "Presencial",
+                        ][item.tipoComunicacion - 1]
                       }
                     </p>
                     <p>Detalles: {item.detallesComunicado}</p>
                     <p>Solicitud: {item.solicitud}</p>
                     <p>Próxima Cita: {item.fechaProximaCita}</p>
                     <p>
-                      Estatus:{" "}
+                      Estatus: {" "}
                       <span
                         style={{
                           color: item.estatus === 1 ? "green" : "red",
@@ -175,7 +205,13 @@ const HistorialComunicacion = () => {
                 ))}
               </div>
             ) : (
-              <p>Este cliente no tiene historial de comunicación.</p>
+              Swal.fire({
+                icon: "info",
+                title: "Sin historial",
+                text: "Este cliente no tiene historial de comunicación.",
+                timer: 3000,
+                showConfirmButton: false,
+              }) && <p></p>
             )
           ) : (
             <p>Selecciona un cliente para ver su historial.</p>
@@ -204,7 +240,7 @@ const HistorialComunicacion = () => {
               >
                 <option value={1}>Correo</option>
                 <option value={2}>Videollamada</option>
-                <option value={3}>Llamada</option>
+
                 <option value={4}>Red Social</option>
                 <option value={5}>Presencial</option>
               </select>
