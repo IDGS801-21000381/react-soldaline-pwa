@@ -1,0 +1,93 @@
+.marketing-layout {
+    display: flex;
+    height: 100vh;
+    background-color: #f9f9f9;
+  }
+  
+  .marketing-container {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  
+  .marketing-card {
+    width: 100%;
+    max-width: 1000px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .promo-input-box {
+    margin-bottom: 20px;
+  }
+  
+  .promo-input, .promo-textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .promo-textarea {
+    resize: none;
+    height: 100px;
+  }
+  
+  .promo-client-table {
+    margin-top: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  .promo-btn {
+    background-color: #4caf50;
+    color: white;
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .promo-btn:disabled {
+    background-color: #a5d6a7;
+    cursor: not-allowed;
+  }
+  
+  .promo-btn:hover:not(:disabled) {
+    background-color: #388e3c;
+  }
+  
+  .promo-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .promo-btn {
+    background-color: #4caf50;
+    color: white;
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .promo-btn:disabled {
+    background-color: #a5d6a7;
+    cursor: not-allowed;
+  }
+  
+  .promo-btn:hover:not(:disabled) {
+    background-color: #388e3c;
+  }
+  

@@ -1,0 +1,122 @@
+.comentarios-layout {
+  display: flex;
+  height: 100vh;
+  background-color: #f9f9f9;
+}
+
+.comentarios-container {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.comentarios-card {
+  width: 100%;
+  max-width: 1000px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.comentarios-botones {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.comentarios-btn {
+  background-color: #4caf50;
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.comentarios-btn:hover:not(:disabled) {
+  background-color: #388e3c;
+}
+
+.comentarios-btn:disabled {
+  background-color: #a5d6a7;
+  cursor: not-allowed;
+}
+
+.comentarios-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.comentarios-tabla th,
+.comentarios-tabla td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.comentarios-tabla th {
+  background-color: #f1f1f1;
+  font-weight: bold;
+}
+
+.comentarios-tabla tr:hover {
+  background-color: #f5f5f5;
+}
+
+.comentarios-tabla td select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.comentarios-tabla td button {
+  background-color: #4caf50;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.comentarios-tabla td button:disabled {
+  background-color: #a5d6a7;
+  cursor: not-allowed;
+}
+
+.enviado {
+  background-color: #e1f5fe;
+}
+
+.enviado td {
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .comentarios-container {
+    padding: 10px;
+  }
+
+  .comentarios-card {
+    padding: 15px;
+  }
+
+  .comentarios-btn {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .comentarios-tabla th,
+  .comentarios-tabla td {
+    font-size: 14px;
+  }
+}

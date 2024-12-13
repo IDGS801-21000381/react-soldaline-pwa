@@ -117,12 +117,12 @@ const Sidebar = ({ username }) => {
                                 <span>Comentarios</span>
                             </Link>
                         </li>
-                        <li>
+                        {/* <li>
                             <Link to="/Cuentas por pagar">
                                 <FaMoneyBillWave className="icon" />
                                 <span>Cuentas por Pagar</span>
                             </Link>
-                        </li>
+                        </li> */}
                     </ul>
                 </nav>
 

@@ -1,203 +1,177 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Siderbar";
+import { Card, Button, Table } from "react-bootstrap";
+import Swal from "sweetalert2";
+import axios from "axios";
+import "../style/Marketing.css";
 
-const MarketingModule = () => {
+const Marketing = () => {
   const [clientes, setClientes] = useState([]);
-  const [clientesFiltrados, setClientesFiltrados] = useState([]);
-  const [clientesSeleccionados, setClientesSeleccionados] = useState([]);
-  const [nombrePromocion, setNombrePromocion] = useState("");
-  const [descripcion, setDescripcion] = useState("");
-  const [linkImagen, setLinkImagen] = useState("");
-  const [fechaVencimiento, setFechaVencimiento] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [promocionCreada, setPromocionCreada] = useState(false);
+  const [productos, setProductos] = useState([]);
+  const [selectedProductoId, setSelectedProductoId] = useState("");
+  const [selectedClientes, setSelectedClientes] = useState([]);
+  const [promoDetails, setPromoDetails] = useState({
+    descripcion: "",
+  });
 
-  const API_URL =
-    "https://bazar20241109230927.azurewebsites.net/api/Usuario/getAllEmpleados";
-
+  // Cargar clientes desde la API
   useEffect(() => {
+    const fetchClientes = async () => {
+      try {
+        const response = await axios.get(
+          "https://bazar20241109230927.azurewebsites.net/api/EmpresaCliente/vista"
+        );
+        setClientes(response.data);
+      } catch (error) {
+        console.error(error);
+        Swal.fire("Error", "No se pudieron cargar los datos de los clientes.", "error");
+      }
+    };
+
     fetchClientes();
   }, []);
 
-  const fetchClientes = async () => {
-    try {
-      const response = await fetch(API_URL);
-      const data = await response.json();
-      const clientesFiltrados = data.filter(
-        (empleado) => empleado.rol === "cliente"
-      );
-      setClientes(clientesFiltrados);
-      setClientesFiltrados(clientesFiltrados);
-    } catch (error) {
-      console.error("Error al cargar los datos:", error);
-      alert("No se pudieron cargar los datos.");
-    }
-  };
+  // Cargar productos desde la API
+  useEffect(() => {
+    const fetchProductos = async () => {
+      try {
+        const response = await axios.get(
+          "https://bazar20241109230927.azurewebsites.net/api/Productos"
+        );
+        setProductos(response.data);
+      } catch (error) {
+        console.error(error);
+        Swal.fire("Error", "No se pudieron cargar los productos.", "error");
+      }
+    };
 
-  const handleSearch = (event) => {
-    const term = event.target.value.toLowerCase();
-    setSearchTerm(term);
-    setClientesFiltrados(
-      clientes.filter(
-        (cliente) =>
-          cliente.nombre.toLowerCase().includes(term) ||
-          cliente.direccion.toLowerCase().includes(term) ||
-          cliente.correo.toLowerCase().includes(term)
-      )
+    fetchProductos();
+  }, []);
+
+  // Manejar selección de clientes
+  const handleClienteSelect = (clienteId) => {
+    setSelectedClientes((prev) =>
+      prev.includes(clienteId) ? prev.filter((id) => id !== clienteId) : [...prev, clienteId]
     );
   };
 
-  const seleccionarCliente = (clienteId) => {
-    setClientesSeleccionados((prevSeleccionados) => {
-      if (prevSeleccionados.includes(clienteId)) {
-        return prevSeleccionados.filter((id) => id !== clienteId);
-      } else {
-        return [...prevSeleccionados, clienteId];
-      }
-    });
-  };
-
-  const enviarCorreos = async () => {
-    if (!nombrePromocion || !descripcion) {
-      alert("Por favor completa todos los campos de la promoción.");
+  // Enviar correos de promoción
+  const handleSendPromo = async () => {
+    if (!selectedProductoId || !promoDetails.descripcion || selectedClientes.length === 0) {
+      Swal.fire("Error", "Completa los detalles y selecciona al menos un cliente.", "error");
       return;
     }
 
-    const destinatarios = clientesSeleccionados.length
-      ? clientesSeleccionados.map((id) =>
-          clientes.find((c) => c.id === id).correo
-        )
-      : clientes.map((c) => c.correo);
+    const productoSeleccionado = productos.find((producto) => producto.id === parseInt(selectedProductoId));
+    const selectedEmails = clientes
+      .filter((cliente) => selectedClientes.includes(cliente.clienteId))
+      .map((cliente) => cliente.correo.trim());
 
-    const emailData = {
-      to: destinatarios,
-      subject: nombrePromocion,
-      body: `
-        <h1>${nombrePromocion}</h1>
-        <p>${descripcion}</p>
-        <img src="${linkImagen}" alt="Imagen de la promoción" />
-        <p><strong>Válido hasta: ${fechaVencimiento}</strong></p>
-      `,
+    const selectNombre = clientes
+      .filter((cliente) => selectedClientes.includes(cliente.clienteId))
+      .map((cliente) => cliente.nombreCliente.trim());
+
+    const emailRequest = {
+      to: selectedEmails.join(","),
+      subject: `Promoción: ${productoSeleccionado.nombreProducto}`,
+      productName: productoSeleccionado.nombreProducto,
+      productImage: productoSeleccionado.imagenProducto,
+      description: promoDetails.descripcion,
+      ClientName: selectNombre.join(","),
     };
 
     try {
-      const response = await fetch("https://localhost:7233/api/Email/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(emailData),
-      });
-
-      if (response.ok) {
-        alert("Correos enviados exitosamente.");
-      } else {
-        const error = await response.json();
-        alert(`No se pudieron enviar los correos: ${error.error}`);
-      }
+      await axios.post("https://bazar20241109230927.azurewebsites.net/api/email/sendPromotion", emailRequest);
+      Swal.fire("Éxito", "Promoción enviada exitosamente.", "success");
+      setSelectedClientes([]);
+      setSelectedProductoId("");
+      setPromoDetails({ descripcion: "" });
     } catch (error) {
-      console.error("Error al enviar correos:", error);
-      alert("Ocurrió un error al enviar los correos.");
-    }
-  };
-
-  const enviarPromocion = () => {
-    if (clientesSeleccionados.length === 0) {
-      alert("No se han seleccionado clientes.");
-      return;
-    }
-
-    if (window.confirm("¿Deseas enviar esta promoción a los clientes seleccionados?")) {
-      enviarCorreos();
-    }
-  };
-
-  const enviarPromocionATodos = () => {
-    if (window.confirm("¿Deseas enviar esta promoción a todos los clientes?")) {
-      enviarCorreos();
+      Swal.fire("Error", error.response?.data || "No se pudo enviar la promoción.", "error");
     }
   };
 
   return (
-    <div className="marketing-container">
+    <div className="marketing-layout">
       <Sidebar />
-      <div className="marketing-content">
-        {promocionCreada ? (
-          <>
-            <h1>Seleccionar Clientes</h1>
-            <input
-              type="text"
-              placeholder="Buscar cliente"
-              value={searchTerm}
-              onChange={handleSearch}
-            />
-            <div className="table-container">
-              <table>
+      <div className="marketing-container">
+        <Card className="marketing-card">
+          <Card.Body>
+            <Card.Title>Promociones de Marketing</Card.Title>
+
+            {/* Selector de Producto */}
+            <div className="promo-input-box">
+              <label className="label">Producto:</label>
+              <select
+                value={selectedProductoId}
+                onChange={(e) => setSelectedProductoId(e.target.value)}
+                className="promo-select"
+              >
+                <option value="">Seleccione un producto</option>
+                {productos.map((producto) => (
+                  <option key={producto.id} value={producto.id}>
+                    {producto.nombreProducto}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Detalles de la promoción */}
+            <div className="promo-input-box">
+              <label className="label">Descripción:</label>
+              <textarea
+                value={promoDetails.descripcion}
+                onChange={(e) => setPromoDetails({ descripcion: e.target.value })}
+                placeholder="Descripción de la promoción"
+                className="promo-textarea"
+              />
+            </div>
+
+            {/* Tabla de clientes */}
+            <div className="promo-client-table">
+              <Table bordered hover>
                 <thead>
                   <tr>
-                    <th>Nombre</th>
-                    <th>Correo</th>
-                    <th>Dirección</th>
                     <th>Seleccionar</th>
+                    <th>Nombre del Cliente</th>
+                    <th>Nombre de la Empresa</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {clientesFiltrados.map((cliente) => (
-                    <tr key={cliente.id}>
-                      <td>{cliente.nombre}</td>
-                      <td>{cliente.correo}</td>
-                      <td>{cliente.direccion}</td>
+                  {clientes.map((cliente) => (
+                    <tr key={cliente.clienteId}>
                       <td>
                         <input
                           type="checkbox"
-                          checked={clientesSeleccionados.includes(cliente.id)}
-                          onChange={() => seleccionarCliente(cliente.id)}
+                          checked={selectedClientes.includes(cliente.clienteId)}
+                          onChange={() => handleClienteSelect(cliente.clienteId)}
                         />
                       </td>
+                      <td>{cliente.nombreCliente}</td>
+                      <td>{cliente.nombreEmpresa}</td>
+                      <td>{cliente.correo}</td>
+                      <td>{cliente.telefono}</td>
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </Table>
             </div>
-            <button onClick={enviarPromocionATodos}>Enviar a Todos</button>
-            <button onClick={enviarPromocion}>
-              Enviar a Seleccionados ({clientesSeleccionados.length})
-            </button>
-          </>
-        ) : (
-          <>
-            <h1>Crear Promoción</h1>
-            <div className="form-group">
-              <input
-                type="text"
-                placeholder="Nombre de la promoción"
-                value={nombrePromocion}
-                onChange={(e) => setNombrePromocion(e.target.value)}
-              />
-              <textarea
-                placeholder="Descripción"
-                value={descripcion}
-                onChange={(e) => setDescripcion(e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="Link de la imagen"
-                value={linkImagen}
-                onChange={(e) => setLinkImagen(e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="Fecha de vencimiento"
-                value={fechaVencimiento}
-                onChange={(e) => setFechaVencimiento(e.target.value)}
-              />
-            </div>
-            <button onClick={() => setPromocionCreada(true)}>
-              Crear Promoción
-            </button>
-          </>
-        )}
+
+            {/* Botón para enviar la promoción */}
+            <Button
+              className="promo-btn"
+              onClick={handleSendPromo}
+              disabled={selectedClientes.length === 0 || !selectedProductoId || !promoDetails.descripcion}
+            >
+              Enviar Promoción
+            </Button>
+          </Card.Body>
+        </Card>
       </div>
     </div>
   );
 };
 
-export default MarketingModule;
+export default Marketing;

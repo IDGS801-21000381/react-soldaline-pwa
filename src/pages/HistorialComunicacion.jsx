@@ -55,9 +55,9 @@ const HistorialComunicacion = () => {
     } catch (error) {
       console.error(error);
       Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudo cargar el historial de comunicación.",
+        icon: "Info",
+        title: "No hay registros",
+        text: "No cuenta con historial de comunicación con este cliente.",
       });
     } finally {
       setLoadingHistorial(false);
@@ -164,58 +164,51 @@ const HistorialComunicacion = () => {
           </div>
 
           {selectedCliente ? (
-            loadingHistorial ? (
-              <p>Cargando historial...</p>
-            ) : historial.length > 0 ? (
-              <div className="leads-list">
-                {historial.map((item) => (
-                  <div
-                    key={item.historialId}
-                    className={`lead-card ${
-                      item.estatus === 1 ? "active" : "inactive"
-                    }`}
-                  >
-                    <p>📅 {item.fechaComunicacion}</p>
-                    <p>
-                      Tipo: {" "}
-                      {
-                        [
-                          "Correo",
-                          "Videollamada",
-                          "Llamada",
-                          "Red Social",
-                          "Presencial",
-                        ][item.tipoComunicacion - 1]
-                      }
-                    </p>
-                    <p>Detalles: {item.detallesComunicado}</p>
-                    <p>Solicitud: {item.solicitud}</p>
-                    <p>Próxima Cita: {item.fechaProximaCita}</p>
-                    <p>
-                      Estatus: {" "}
-                      <span
-                        style={{
-                          color: item.estatus === 1 ? "green" : "red",
-                        }}
-                      >
-                        {item.estatus === 1 ? "Activo" : "Inactivo"}
-                      </span>
-                    </p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              Swal.fire({
-                icon: "info",
-                title: "Sin historial",
-                text: "Este cliente no tiene historial de comunicación.",
-                timer: 3000,
-                showConfirmButton: false,
-              }) && <p></p>
-            )
-          ) : (
-            <p>Selecciona un cliente para ver su historial.</p>
-          )}
+  loadingHistorial ? (
+    <p>Cargando historial...</p>
+  ) : historial.length > 0 ? (
+    <div className="leads-list">
+      {historial.map((item) => (
+        <div
+          key={item.historialId}
+          className={`lead-card ${item.estatus === 1 ? "active" : "inactive"}`}
+        >
+          <p>📅 {item.fechaComunicacion}</p>
+          <p>
+            Tipo:{" "}
+            {
+              [
+                "Correo",
+                "Videollamada",
+                "Llamada",
+                "Red Social",
+                "Presencial",
+              ][item.tipoComunicacion - 1]
+            }
+          </p>
+          <p>Detalles: {item.detallesComunicado}</p>
+          <p>Solicitud: {item.solicitud}</p>
+          <p>Próxima Cita: {item.fechaProximaCita}</p>
+          <p>
+            Estatus:{" "}
+            <span
+              style={{
+                color: item.estatus === 1 ? "green" : "red",
+              }}
+            >
+              {item.estatus === 1 ? "Activo" : "Inactivo"}
+            </span>
+          </p>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <p>Este cliente no tiene historial de comunicación.</p>
+  )
+) : (
+  <p>Selecciona un cliente para ver su historial.</p>
+)}
+
 
           {!showForm && selectedCliente && (
             <button
