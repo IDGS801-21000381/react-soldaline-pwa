@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import Sidebar from '../components/Siderbar';
-import "../style/Marketing.css";
+import "../style/Comentario.css"; // Estilos personalizados
 
 const ComentariosXClientes = () => {
   const [clientes, setClientes] = useState([]);
   const [comentarios, setComentarios] = useState([]);
-  const [localData, setLocalData] = useState([]);
-  const [mostrarTabla, setMostrarTabla] = useState('correo');
+  const [selectedClientes, setSelectedClientes] = useState([]);
+  const [mostrarVista, setMostrarVista] = useState('correo');
 
   // Cargar clientes desde la API
   useEffect(() => {
@@ -38,10 +38,10 @@ const ComentariosXClientes = () => {
           const parts = item.descripcion.split('|');
           return {
             id: item.id,
-            nombre: parts[0] || item.descripcion,
-            empresa: parts[1] || '',
-            contacto: parts[2] || '',
-            descripcion: parts[3] || item.descripcion,
+            nombre: parts[0] || 'Sin Nombre',
+            empresa: parts[1] || 'Sin Empresa',
+            contacto: parts[2] || 'Sin Contacto',
+            descripcion: parts[3] || 'Sin Descripción',
             fecha: item.fecha,
             tipo: item.tipo === 1 ? 'Queja' : item.tipo === 2 ? 'Comentario' : 'Solicitud de devolución',
             estatus: item.estatus === 0 ? 'Solicitud' : item.estatus === 1 ? 'Procesando' : 'Finalizado',
@@ -58,35 +58,46 @@ const ComentariosXClientes = () => {
     fetchComentarios();
   }, []);
 
+  // Enviar correos
+  const enviarCorreo = async (cliente) => {
+    const emailRequest = {
+      to: cliente.correo,
+      subject: `Encuesta para ${cliente.nombreCliente}`,
+      surveyLink: "https://soft-lebkuchen-8711b6.netlify.app/",
+      clientName: cliente.nombreCliente,
+    };
+
+    try {
+      await axios.post(
+        "https://bazar20241109230927.azurewebsites.net/api/Comentarios/sendSurvey",
+        emailRequest
+      );
+      Swal.fire("Éxito", "Correo enviado correctamente.", "success");
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", "No se pudo enviar el correo.", "error");
+    }
+  };
+
   // Cambiar estatus
   const cambiarEstatus = async (id, nuevoEstatus) => {
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: `El estatus se cambiará a ${nuevoEstatus === 1 ? 'Procesando' : 'Finalizado'}`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, cambiar',
-      cancelButtonText: 'Cancelar',
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await axios.post(
-            `https://bazar20241109230927.azurewebsites.net/api/ComentariosCliente/updateStatus/?id=${id}&status=${nuevoEstatus}`
-          );
-          setComentarios((prevComentarios) =>
-            prevComentarios.map((comentario) =>
-              comentario.id === id
-                ? { ...comentario, estatus: nuevoEstatus === 1 ? 'Procesando' : 'Finalizado' }
-                : comentario
-            )
-          );
-          Swal.fire('¡Actualizado!', 'El estatus se ha cambiado correctamente.', 'success');
-        } catch (error) {
-          console.error(error);
-          Swal.fire('Error', 'No se pudo cambiar el estatus.', 'error');
-        }
-      }
-    });
+    try {
+      await axios.post(
+        `https://bazar20241109230927.azurewebsites.net/api/ComentariosCliente/updateStatus`,
+        { id, status: nuevoEstatus }
+      );
+      setComentarios((prevComentarios) =>
+        prevComentarios.map((comentario) =>
+          comentario.id === id
+            ? { ...comentario, estatus: nuevoEstatus === 1 ? 'Procesando' : 'Finalizado' }
+            : comentario
+        )
+      );
+      Swal.fire("Éxito", "Estatus cambiado correctamente.", "success");
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", "No se pudo cambiar el estatus.", "error");
+    }
   };
 
   return (
@@ -94,33 +105,42 @@ const ComentariosXClientes = () => {
       <Sidebar />
       <div className="comentarios-container">
         <div className="comentarios-card">
-          <h2>Comentarios por Clientes</h2>
+          <h2 className="titulo">Gestión de Comentarios</h2>
           <div className="comentarios-botones">
-            <button onClick={() => setMostrarTabla('correo')} className="comentarios-btn">Mandar Correo</button>
-            <button onClick={() => setMostrarTabla('detalles')} className="comentarios-btn">Mostrar Detalles</button>
+            <button
+              onClick={() => setMostrarVista('correo')}
+              className={`comentarios-btn ${mostrarVista === 'correo' ? 'activo' : ''}`}
+            >
+              Mandar Correos
+            </button>
+            <button
+              onClick={() => setMostrarVista('seguimiento')}
+              className={`comentarios-btn ${mostrarVista === 'seguimiento' ? 'activo' : ''}`}
+            >
+              Seguimiento
+            </button>
           </div>
-          {mostrarTabla === 'correo' && (
-            <div>
+          <div className="scroll-container">
+            {mostrarVista === 'correo' && (
               <table className="comentarios-tabla">
                 <thead>
                   <tr>
-                    <th>Nombre</th>
+                    <th>Nombre Cliente</th>
                     <th>Empresa</th>
-                    <th>Acción</th>a
+                    <th>Correo</th>
+                    <th>Acción</th>
                   </tr>
                 </thead>
                 <tbody>
                   {clientes.map((cliente) => (
-                    <tr key={cliente.id} className={localData.includes(cliente.id) ? 'enviado' : ''}>
-                      <td>{cliente.nombre}</td>
-                      <td>{cliente.empresa}</td>
+                    <tr key={cliente.clienteId}>
+                      <td>{cliente.nombreCliente}</td>
+                      <td>{cliente.nombreEmpresa || 'Sin Empresa'}</td>
+                      <td>{cliente.correo}</td>
                       <td>
                         <button
-                          onClick={() => {
-                            setLocalData((prev) => [...prev, cliente.id]);
-                            Swal.fire('Enviado', 'Correo enviado correctamente.', 'success');
-                          }}
-                          disabled={localData.includes(cliente.id)}
+                          onClick={() => enviarCorreo(cliente)}
+                          className="btn-cafe"
                         >
                           Mandar Correo
                         </button>
@@ -129,10 +149,8 @@ const ComentariosXClientes = () => {
                   ))}
                 </tbody>
               </table>
-            </div>
-          )}
-          {mostrarTabla === 'detalles' && (
-            <div>
+            )}
+            {mostrarVista === 'seguimiento' && (
               <table className="comentarios-tabla">
                 <thead>
                   <tr>
@@ -158,7 +176,12 @@ const ComentariosXClientes = () => {
                       <td>
                         <select
                           value={comentario.estatus}
-                          onChange={(e) => cambiarEstatus(comentario.id, e.target.value === 'Procesando' ? 1 : 2)}
+                          onChange={(e) =>
+                            cambiarEstatus(
+                              comentario.id,
+                              e.target.value === 'Procesando' ? 1 : 2
+                            )
+                          }
                         >
                           <option value="Solicitud">Solicitud</option>
                           <option value="Procesando">Procesando</option>
@@ -170,8 +193,8 @@ const ComentariosXClientes = () => {
                   ))}
                 </tbody>
               </table>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
