@@ -1,117 +1,189 @@
 .ventas-layout {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    background-color: #f9f9f9;
-    justify-content: flex-start;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #f9f9f9;
+  justify-content: flex-start;
 }
 
+
 .ventas-layout .container {
-    padding: 20px;
+  padding: 20px;
 }
 
 .ventas-layout .row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
 }
 
 .ventas-layout .card {
-    width: calc(33.33% - 20px); /* Cada tarjeta ocupa 1/3 del ancho menos el espacio de margen */
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-    margin-bottom: 20px;
-    height: 100%;
+  width: calc(33.33% - 20px);
+  /* Cada tarjeta ocupa 1/3 del ancho menos el espacio de margen */
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  margin-bottom: 20px;
+  height: 100%;
 }
 
 .ventas-layout .card-img-top {
-    height: 200px;
-    object-fit: cover;
-    width: 100%;
+  height: 200px;
+  object-fit: cover;
+  width: 100%;
 }
 
 .ventas-layout .card-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 15px;
 }
 
 .ventas-layout .card-title {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
 }
 
 .ventas-layout .card-text {
-    font-size: 1rem;
-    margin-bottom: 15px;
+  font-size: 1rem;
+  margin-bottom: 15px;
 }
 
 .ventas-layout button {
-    align-self: flex-start;
+  align-self: flex-start;
 }
 
 @media (max-width: 768px) {
-    .ventas-layout .card {
-        width: calc(50% - 20px); /* En pantallas más pequeñas, dos tarjetas por fila */
-    }
+  .ventas-layout .card {
+    width: calc(50% - 20px);
+    /* En pantallas más pequeñas, dos tarjetas por fila */
+  }
 }
 
 @media (max-width: 480px) {
-    .ventas-layout .card {
-        width: 100%; /* En pantallas pequeñas, una tarjeta por fila */
-    }
+  .ventas-layout .card {
+    width: 100%;
+    /* En pantallas pequeñas, una tarjeta por fila */
+  }
 }
+
 /* Botón flotante */
 .boton-flotante {
-    position: fixed;
-    bottom: 20px; /* Ubicación en la esquina inferior derecha */
-    right: 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    z-index: 1100; /* Más alto que el modal */
-    cursor: pointer;
+  position: fixed;
+  bottom: 20px;
+  /* Ubicación en la esquina inferior derecha */
+  right: 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  z-index: 1100;
+  /* Más alto que el modal */
+  cursor: pointer;
+}
+
+/* Asegúrate de que estos estilos estén al final de tu archivo CSS */
+
+.modal-float {
+  position: fixed;
+  top: 10%;
+  right: 10%;
+  width: 350px;
+  /* Ajusta el tamaño del modal */
+  background-color: white;
+  /* Fondo blanco para que se vea claramente */
+  padding: 20px;
+  border-radius: 10px;
+  /* Borde redondeado */
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  /* Sombra para darle un efecto de profundidad */
+  z-index: 1050;
+  /* Asegúrate de que esté encima de otros elementos */
+}
+
+/* Fondo opaco para el modal */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  /* Fondo oscuro translúcido */
+}
+
+/* Modal de cantidad */
+.modal-float .modal-dialog {
+  margin: 0;
+  position: fixed;
+  top: 20%;
+  /* Ajusta la distancia desde la parte superior de la pantalla */
+  right: 20%;
+  /* Ajusta la distancia desde el lado derecho de la pantalla */
+  max-width: 100%;
+  /* Asegúrate de que se ajuste bien en pantallas pequeñas */
+  width: auto;
+  /* Deja que el contenido determine el tamaño */
+}
+
+/* Modal de datos de empresa */
+.modal-float .modal-dialog {
+  margin: 0;
+  position: fixed;
+  top: 20%;
+  right: 20%;
+  max-width: 100%;
+  width: auto;
+}
+
+/* Ajustes en los botones */
+.modal-float .modal-footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.modal-float .modal-footer .btn {
+  width: 45%;
+  /* Ajusta el tamaño de los botones */
 }
 
 
 .boton-flotante:hover {
-    background-color: #0056b3;
-    transform: scale(1.1);
+  background-color: #0056b3;
+  transform: scale(1.1);
 }
 
 /* Modal personalizado */
 .modal-flotante .modal-content {
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    border: none;
-    background-color: #ffffff;
-}
-.carrito-flotante {
-    position: fixed;
-    bottom: 20px; /* Ajusta según tu preferencia */
-    right: 20px;  /* Ajusta según tu preferencia */
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    width: 300px; /* Ajusta el tamaño del contenedor */
-    max-height: 400px; /* Limita la altura */
-    overflow-y: auto; /* Agrega scroll si hay muchos productos */
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  border: none;
+  background-color: #ffffff;
 }
 
+.carrito-flotante {
+  position: fixed;
+  bottom: 20px;
+  /* Ajusta según tu preferencia */
+  right: 20px;
+  /* Ajusta según tu preferencia */
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  width: 300px;
+  /* Ajusta el tamaño del contenedor */
+  max-height: 400px;
+  /* Limita la altura */
+  overflow-y: auto;
+  /* Agrega scroll si hay muchos productos */
+}

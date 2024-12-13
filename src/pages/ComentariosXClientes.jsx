@@ -7,8 +7,24 @@ import "../style/Comentario.css"; // Estilos personalizados
 const ComentariosXClientes = () => {
   const [clientes, setClientes] = useState([]);
   const [comentarios, setComentarios] = useState([]);
-  const [selectedClientes, setSelectedClientes] = useState([]);
   const [mostrarVista, setMostrarVista] = useState('correo');
+  const [justificaciones, setJustificaciones] = useState({}); // Almacena las justificaciones por ID
+
+  // Cargar justificaciones y estatus guardados en localStorage
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem('comentariosData')) || {};
+    setJustificaciones(storedData);
+  }, []);
+
+  // Guardar justificaciones y estatus en localStorage
+  const guardarEnLocalStorage = (id, nuevoEstatus, justificacion = "") => {
+    const updatedData = {
+      ...justificaciones,
+      [id]: { estatus: nuevoEstatus, justificacion },
+    };
+    setJustificaciones(updatedData);
+    localStorage.setItem('comentariosData', JSON.stringify(updatedData));
+  };
 
   // Cargar clientes desde la API
   useEffect(() => {
@@ -36,6 +52,8 @@ const ComentariosXClientes = () => {
         );
         const formattedData = response.data.map((item) => {
           const parts = item.descripcion.split('|');
+          const localData = justificaciones[item.id] || {};
+
           return {
             id: item.id,
             nombre: parts[0] || 'Sin Nombre',
@@ -44,8 +62,9 @@ const ComentariosXClientes = () => {
             descripcion: parts[3] || 'Sin Descripción',
             fecha: item.fecha,
             tipo: item.tipo === 1 ? 'Queja' : item.tipo === 2 ? 'Comentario' : 'Solicitud de devolución',
-            estatus: item.estatus === 0 ? 'Solicitud' : item.estatus === 1 ? 'Procesando' : 'Finalizado',
+            estatus: localData.estatus || (item.estatus === 0 ? 'Solicitud' : item.estatus === 1 ? 'Procesando' : 'Finalizado'),
             calificacion: item.calificacion,
+            justificacion: localData.justificacion || '',
           };
         });
         setComentarios(formattedData);
@@ -56,48 +75,44 @@ const ComentariosXClientes = () => {
     };
 
     fetchComentarios();
-  }, []);
+  }, [justificaciones]);
 
-  // Enviar correos
-  const enviarCorreo = async (cliente) => {
-    const emailRequest = {
-      to: cliente.correo,
-      subject: `Encuesta para ${cliente.nombreCliente}`,
-      surveyLink: "https://soft-lebkuchen-8711b6.netlify.app/",
-      clientName: cliente.nombreCliente,
-    };
-
-    try {
-      await axios.post(
-        "https://bazar20241109230927.azurewebsites.net/api/Comentarios/sendSurvey",
-        emailRequest
-      );
-      Swal.fire("Éxito", "Correo enviado correctamente.", "success");
-    } catch (error) {
-      console.error(error);
-      Swal.fire("Error", "No se pudo enviar el correo.", "error");
+  // Cambiar estatus
+  const cambiarEstatus = (id, nuevoEstatus) => {
+    if (nuevoEstatus === 'Finalizado') {
+      Swal.fire({
+        title: 'Justificación requerida',
+        input: 'text',
+        inputLabel: 'Razón para finalizar',
+        inputPlaceholder: 'Escribe la justificación...',
+        showCancelButton: true,
+        confirmButtonText: 'Guardar',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const justificacion = result.value || 'Sin Justificación';
+          actualizarComentario(id, nuevoEstatus, justificacion);
+        }
+      });
+    } else {
+      actualizarComentario(id, nuevoEstatus);
     }
   };
 
-  // Cambiar estatus
-  const cambiarEstatus = async (id, nuevoEstatus) => {
-    try {
-      await axios.post(
-        `https://bazar20241109230927.azurewebsites.net/api/ComentariosCliente/updateStatus`,
-        { id, status: nuevoEstatus }
-      );
-      setComentarios((prevComentarios) =>
-        prevComentarios.map((comentario) =>
-          comentario.id === id
-            ? { ...comentario, estatus: nuevoEstatus === 1 ? 'Procesando' : 'Finalizado' }
-            : comentario
-        )
-      );
-      Swal.fire("Éxito", "Estatus cambiado correctamente.", "success");
-    } catch (error) {
-      console.error(error);
-      Swal.fire("Error", "No se pudo cambiar el estatus.", "error");
-    }
+  // Actualizar comentario y guardar en localStorage
+  const actualizarComentario = (id, nuevoEstatus, justificacion = "") => {
+    setComentarios((prevComentarios) =>
+      prevComentarios.map((comentario) =>
+        comentario.id === id
+          ? {
+              ...comentario,
+              estatus: nuevoEstatus,
+              justificacion: nuevoEstatus === 'Finalizado' ? justificacion : '',
+            }
+          : comentario
+      )
+    );
+    guardarEnLocalStorage(id, nuevoEstatus, justificacion);
+    Swal.fire("Éxito", "Estatus cambiado correctamente.", "success");
   };
 
   return (
@@ -161,6 +176,7 @@ const ComentariosXClientes = () => {
                     <th>Fecha</th>
                     <th>Tipo</th>
                     <th>Estatus</th>
+                    <th>Justificación</th>
                     <th>Calificación</th>
                   </tr>
                 </thead>
@@ -176,18 +192,17 @@ const ComentariosXClientes = () => {
                       <td>
                         <select
                           value={comentario.estatus}
-                          onChange={(e) =>
-                            cambiarEstatus(
-                              comentario.id,
-                              e.target.value === 'Procesando' ? 1 : 2
-                            )
-                          }
+                          onChange={(e) => cambiarEstatus(
+                            comentario.id,
+                            e.target.value
+                          )}
                         >
                           <option value="Solicitud">Solicitud</option>
                           <option value="Procesando">Procesando</option>
                           <option value="Finalizado">Finalizado</option>
                         </select>
                       </td>
+                      <td>{comentario.justificacion}</td>
                       <td>{'⭐'.repeat(comentario.calificacion)}</td>
                     </tr>
                   ))}

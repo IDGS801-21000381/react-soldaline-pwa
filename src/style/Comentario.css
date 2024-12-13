@@ -10,15 +10,18 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
+  overflow: auto; /* Permite scroll si el contenido excede */
 }
 
 .comentarios-card {
   width: 100%;
-  max-width: 1000px;
+  max-width: 1200px; /* Ajuste para mayor tamaño */
+  min-height: 400px; /* Altura mínima para contenido */
   background-color: white;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
 .comentarios-botones {
@@ -53,6 +56,11 @@
   margin-top: 20px;
   border-radius: 5px;
   overflow: hidden;
+}
+
+.comentarios-tabla-container {
+  max-height: 500px; /* Altura máxima con scroll interno */
+  overflow-y: auto;
 }
 
 .comentarios-tabla th,
@@ -118,5 +126,9 @@
   .comentarios-tabla th,
   .comentarios-tabla td {
     font-size: 14px;
+  }
+
+  .comentarios-tabla-container {
+    max-height: 300px; /* Reducir scroll interno en pantallas pequeñas */
   }
 }

@@ -9,12 +9,21 @@ const Planificacion = () => {
   const [cantidad, setCantidad] = useState('');
   const [resultado, setResultado] = useState(null);
   const [historialProduccion, setHistorialProduccion] = useState([]);
-
+  const [usuario, setUsuario] = useState([]);
+ useEffect(() => {
+    
+      
+      const usuarioData = localStorage.getItem("usuario");
+      if (usuarioData) {
+        setUsuario(JSON.parse(usuarioData)) ;
+        
+      }
+    }, []);
   // Cargar la lista de productos desde la API
   useEffect(() => {
     const fetchProductos = async () => {
       try {
-        const response = await fetch('https://bazar20241109230927.azurewebsites.net/api/Productos/getAll');
+        const response = await fetch('https://bazar20241109230927.azurewebsites.net/api/Inventario/productos');
         const data = await response.json();
         if (Array.isArray(data) && data.length > 0) {
           setProductos(data);
@@ -92,13 +101,13 @@ const Planificacion = () => {
     try {
       const solicitudProduccion = {
         UsuarioId: 1, // Cambiar si tienes un sistema de usuarios dinámico
-        Productos: [
-          {
+        
+          
             FabricacionId: selectedProductoId,
             Cantidad: parseFloat(cantidad),
-            Descripcion: `Producción para el producto seleccionado`,
-          },
-        ],
+            Descripcion: `Producción para el producto desde planificacion`,
+          
+        
       };
 
       const produccionResponse = await fetch('https://bazar20241109230927.azurewebsites.net/api/produccion/solicitarProduccion', {
@@ -160,7 +169,7 @@ const Planificacion = () => {
                 {productos.length > 0 ? (
                   productos.map((producto) => (
                     <option key={producto.id} value={producto.id}>
-                      {producto.nombreProducto}
+                      {producto.nombreFabricacion}
                     </option>
                   ))
                 ) : (
